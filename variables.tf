@@ -68,13 +68,13 @@ variable "gke_node_count" {
 }
 
 variable "gke_release_channel" {
-  description = "The requested asn for Megaport"
+  description = "The release channel for GKE"
   type        = string
   default     = "RAPID"
 }
 
 variable "gke_machine_type" {
-  description = "The requested asn for Megaport"
+  description = "The machine type for GKE nodes"
   type        = string
   default     = "c2-standard-4"
 }
@@ -156,4 +156,31 @@ variable "acm_config_sync_source_format" {
     condition     = contains(["unstructured", "hierarchical"], var.acm_config_sync_source_format)
     error_message = "Must be on of [hierarchical unstructured]"
   }
+}
+
+variable "inlets_uplink_provider_namespace" {
+    description = "The name of the namespace to install uplink provider"
+    type = string
+    default = "inlets"
+}
+
+variable "inlets_uplink_tunnels_namespace" {
+    description = "The name of the namespace to install uplink tunnels"
+    type = string
+    default = "tunnels"
+}
+
+variable "inlets_uplink_license" {
+    description = "The license key for uplink"
+    type = string
+}
+
+variable "inlets_uplink_provider_domain" {
+    description = "The domain to use for the provider"
+    type = string
+}
+
+variable "inlets_uplink_provider_email_address" {
+    description = "The email address to use for the provider"
+    type = string
 }

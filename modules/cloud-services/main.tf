@@ -10,7 +10,7 @@ resource "null_resource" "set_gke_creds" {
 }
 
 
-resource "null_resource" "install_nginx" {
+/*resource "null_resource" "install_nginx" {
   depends_on = [
     null_resource.set_gke_creds
   ]
@@ -21,7 +21,7 @@ resource "null_resource" "install_nginx" {
         helm install ingress-nginx ingress-nginx/ingress-nginx --create-namespace --namespace ingress-nginx --set rbac.create=true
     EOT
   }
-}
+}*/
 
 resource "null_resource" "install_cert_manager" {
   depends_on = [
@@ -39,7 +39,7 @@ resource "null_resource" "install_cert_manager" {
   }
 }
 
-resource "null_resource" "install_external_dns" {
+/*resource "null_resource" "install_external_dns" {
   depends_on = [
     null_resource.set_gke_creds
   ]
@@ -67,4 +67,4 @@ resource "null_resource" "deploy_shopping_cart" {
         EOF
     EOT
   }
-}
+}*/

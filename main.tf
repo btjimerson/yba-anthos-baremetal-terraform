@@ -6,13 +6,21 @@ provider "google-beta" {
 }
 
 provider "kubernetes" {
-  host                   = "https://${module.gke_cluster.endpoint}"
-  cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificate)
-  token                  = data.google_client_config.default.access_token
+    host                   = "https://${module.gke_cluster.endpoint}"
+    cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificate)
+    token                  = data.google_client_config.default.access_token
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = "https://${module.gke_cluster.endpoint}"
+    cluster_ca_certificate = base64decode(module.gke_cluster.cluster_ca_certificate)
+    token                  = data.google_client_config.default.access_token
+  }
 }
 
 module "baremetal_anthos_cluster" {
-  source             = "github.com/btjimerson/anthos-baremetal-terraform"
+  source             = "git@github.com:btjimerson/anthos-baremetal-terraform"
   cluster_name       = format("pnap-%s", var.cluster_name)
   cloud              = var.cloud
   pnap_client_id     = var.pnap_client_id
@@ -70,6 +78,16 @@ module "cloud_services" {
   redis_load_balancer_ip = local.redis_load_balancer_ip
 }
 
+module "inlets_uplink" {
+  depends_on = [module.cloud_services]
+  source = "./modules/inlets-uplink"
+  inlets_uplink_provider_namespace = var.inlets_uplink_provider_namespace
+  inlets_uplink_tunnels_namespace = var.inlets_uplink_tunnels_namespace
+  inlets_uplink_license = var.inlets_uplink_license
+  inlets_uplink_provider_domain = var.inlets_uplink_provider_domain
+  inlets_uplink_provider_email_address = var.inlets_uplink_provider_email_address
+}
+
 # GKE hub membership for Anthos config management
 resource "google_gke_hub_membership" "membership" {
   membership_id = "${var.cluster_name}-membership"
@@ -99,9 +117,16 @@ resource "google_gke_hub_feature_membership" "feature_member" {
   }
 }
 
+# Wait for a little bit to let ACM create it's namespace
+# before we put the github credentials in there
+resource "time_sleep" "wait_for_namespace" {
+  depends_on      = [google_gke_hub_feature_membership.feature_member]
+  create_duration = "60s"
+}
+
 # Credentials for Github sync
 resource "kubernetes_secret" "git_creds" {
-  depends_on = [google_gke_hub_feature_membership.feature_member]
+  depends_on = [time_sleep.wait_for_namespace]
   metadata {
     name      = "git-creds"
     namespace = var.acm_namespace
