@@ -1,3 +1,4 @@
+// Create 
 resource "google_compute_network" "gpc_network" {
   name                    = format("%s-network", var.cluster_name)
   project                 = var.gcp_project_id
