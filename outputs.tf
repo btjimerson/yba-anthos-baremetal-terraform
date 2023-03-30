@@ -23,8 +23,12 @@ output "website" {
   description = "The domain the website will be hosted on."
 }
 
-/* TODO - figure this out*/
 output "nginx_ingress_ip" {
-  value = module.inlets_uplink.nginx_ingress_ip
+  value       = module.inlets_uplink.nginx_ingress_ip
   description = "The IP address of the nginx ingress controler"
-}/**/
+}
+
+output "yba_ui_ip" {
+  value       = module.yba.yba_ui_ip
+  description = "The IP address of the nginx ingress controller"
+}
