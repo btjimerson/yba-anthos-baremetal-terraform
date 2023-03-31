@@ -35,7 +35,7 @@ provider "kubectl" {
 }
 
 module "baremetal_anthos_cluster" {
-  source             = "btjimerson/anthos-baremetal-terraform"
+  source             = "github.com/btjimerson/anthos-baremetal-terraform"
   cluster_name       = format("pnap-%s", var.cluster_name)
   cloud              = var.cloud
   pnap_client_id     = var.pnap_client_id
@@ -164,6 +164,7 @@ resource "google_gke_hub_membership" "membership" {
 
 # Anthos config managmement
 resource "google_gke_hub_feature_membership" "feature_member" {
+  depends_on = [module.inlets_uplink]
   location   = "global"
   membership = google_gke_hub_membership.membership.membership_id
   feature    = "configmanagement"
