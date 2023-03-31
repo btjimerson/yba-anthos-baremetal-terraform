@@ -18,6 +18,16 @@ output "pnap_bastion_host_username" {
   description = "Username for the bastion host in the test environment"
 }
 
+output "remote_admin_token" {
+    description = "The token for the remote admin service account"
+    value = module.baremetal_anthos_cluster.remote_admin_token
+}
+
+output "remote_kubeconfig" {
+    description = "The kubeconfig for the remote Kubernetes cluster"
+    value = module.baremetal_anthos_cluster.remote_kubeconfig
+}
+
 output "website" {
   value       = "https://${var.domain_name}"
   description = "The domain the website will be hosted on."
