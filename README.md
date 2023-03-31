@@ -177,8 +177,9 @@ yba_ui_ip = "35.223.31.53"
 | <a name="output_nginx_ingress_ip"></a> [nginx\_ingress\_ip](#output\_nginx\_ingress\_ip) | The IP address of the nginx ingress controler |
 | <a name="output_pnap_bastion_host_ip"></a> [pnap\_bastion\_host\_ip](#output\_pnap\_bastion\_host\_ip) | IP Address of the bastion host in the test environment |
 | <a name="output_pnap_bastion_host_username"></a> [pnap\_bastion\_host\_username](#output\_pnap\_bastion\_host\_username) | Username for the bastion host in the test environment |
+| <a name="output_remote_admin_token"></a> [remote\_admin\_token](#output\_remote\_admin\_token) | The token for the remote admin service account |
+| <a name="output_remote_kubeconfig"></a> [remote\_kubeconfig](#output\_remote\_kubeconfig) | The kubeconfig for the remote Kubernetes cluster |
 | <a name="output_ssh_command_for_pnap"></a> [ssh\_command\_for\_pnap](#output\_ssh\_command\_for\_pnap) | Command to run to SSH into the bastion host |
 | <a name="output_ssh_key_path"></a> [ssh\_key\_path](#output\_ssh\_key\_path) | Path to the SSH Private key for the bastion host |
-| <a name="output_website"></a> [website](#output\_website) | The domain the website will be hosted on. |
 | <a name="output_yba_ui_ip"></a> [yba\_ui\_ip](#output\_yba\_ui\_ip) | The IP address of the YBA UI |
 <!-- END_TF_DOCS -->
