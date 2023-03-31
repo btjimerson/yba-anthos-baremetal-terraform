@@ -344,7 +344,7 @@ resource "kubectl_manifest" "yba_operator_cluster_role" {
     kubectl_manifest.yba_operator_universe_crd,
     kubernetes_config_map.yba_operator_pull_secret_config_map
   ]
-  yaml_body = data.http.yba_operator_cluster_role_yaml.body
+  yaml_body = data.http.yba_operator_cluster_role_yaml.response_body
 }
 
 // Install the YBA operator cluster role binding
@@ -353,7 +353,7 @@ resource "kubectl_manifest" "yba_operator_cluster_role_binding" {
     kubectl_manifest.yba_operator_service_account,
     kubectl_manifest.yba_operator_cluster_role
   ]
-  yaml_body = data.http.yba_operator_cluster_role_binding_yaml.body
+  yaml_body = data.http.yba_operator_cluster_role_binding_yaml.response_body
 }
 
 // Install the YBA operator deployment
@@ -361,7 +361,7 @@ resource "kubectl_manifest" "yba_operator_deployment" {
   depends_on = [
     kubectl_manifest.yba_operator_cluster_role_binding
   ]
-  yaml_body          = data.http.yba_operator_deployment_yaml.body
+  yaml_body          = data.http.yba_operator_deployment_yaml.response_body
   override_namespace = var.yba_operator_namespace
 }
 

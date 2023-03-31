@@ -28,11 +28,6 @@ output "remote_kubeconfig" {
     value = module.baremetal_anthos_cluster.remote_kubeconfig
 }
 
-output "website" {
-  value       = "https://${var.domain_name}"
-  description = "The domain the website will be hosted on."
-}
-
 output "nginx_ingress_ip" {
   value       = module.inlets_uplink.nginx_ingress_ip
   description = "The IP address of the nginx ingress controler"
