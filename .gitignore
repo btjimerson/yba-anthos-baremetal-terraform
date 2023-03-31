@@ -33,3 +33,7 @@ override.tf.json
 # example: *tfplan*
 terraform.tfvars
 .idea
+
+# Generated files
+nginx-ingress-ip.txt
+yba-ui-ip.txt
