@@ -35,7 +35,7 @@ provider "kubectl" {
 }
 
 module "baremetal_anthos_cluster" {
-  source             = "git@github.com:btjimerson/anthos-baremetal-terraform"
+  source             = "btjimerson/anthos-baremetal-terraform"
   cluster_name       = format("pnap-%s", var.cluster_name)
   cloud              = var.cloud
   pnap_client_id     = var.pnap_client_id
@@ -103,6 +103,7 @@ module "gke_auth" {
   cluster_name = format("gke-%s", var.cluster_name)
 }
 
+#Inlets uplink server
 module "inlets_uplink" {
   depends_on                                  = [module.cloud_services]
   source                                      = "./modules/inlets-uplink"
@@ -115,6 +116,7 @@ module "inlets_uplink" {
   inlets_uplink_tunnels_predefined_token_name = var.inlets_uplink_tunnels_predefined_token_name
 }
 
+# YugabyteDB Anywhere
 module "yba" {
   depends_on = [
     module.cloud_services,
