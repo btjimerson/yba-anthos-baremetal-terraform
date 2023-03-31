@@ -1,10 +1,9 @@
-[![Anthos Website](https://img.shields.io/badge/Website-cloud.google.com/anthos-blue)](https://cloud.google.com/anthos) [![Apache License](https://img.shields.io/github/license/GCPartner/phoenixnap-megaport-anthos)](https://github.com/GCPartner/phoenixnap-megaport-anthos/blob/main/LICENSE) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/GCPartner/phoenixnap-megaport-anthos/pulls) ![](https://img.shields.io/badge/Stability-Experimental-red.svg)
-# Google Anthos on PhoenixNAP with GKE on Google Cloud, interconnected by MegaPort
-This [Terraform](http://terraform.io) module will allow you to deploy [Google Cloud's Anthos on Baremetal](https://cloud.google.com/anthos) on [PhoenixNAP](http://phoenixnap.com), a [GKE cluster](https://cloud.google.com/kubernetes-engine) on [Google Cloud](https://cloud.google.com), and interconnected by [MegaPort](http://megaport.com). This module then deploys a [MicroServices](https://github.com/GoogleCloudPlatform/microservices-demo) application spanning both Kubernetes clusters. With the web frontend and middlware being hosted in Google Cloud's GKE, and the backend database being hosted on an Anthos Cluster on  PhoenixNAP's Bare Metal Cloud. We then use [External DNS](https://github.com/kubernetes-sigs/external-dns) to create DNS records on the fly for our website, and [Cert Manager](https://cert-manager.io/) to get a valid SSL Certificate as well.
-[![Watch Demo on YouTube](docs/images/youtube.png)](https://youtu.be/cgg8E9V9wpY?autoplay=1)
+# Google Anthos on PhoenixNAP with GKE on Google Cloud, YugabyteDB Anywhere, interconnected by Inlets Uplink
+This [Terraform](http://terraform.io) module will allow you to deploy [Google Cloud's Anthos on Baremetal](https://cloud.google.com/anthos) on [PhoenixNAP](http://phoenixnap.com), a [GKE cluster](https://cloud.google.com/kubernetes-engine) on [Google Cloud](https://cloud.google.com), and interconnected by [Inlets Uplink](https://inlets.dev). This module then deploys [YugabyteDB Anywhere](https://www.yugabyte.com) on the GKE cluster, as well as an Anthos Configuration Management package to allow you to create a YugabyteDB Universe in the remote cluster.
+![GKE + YBA](./docs/images/GDC_YBA.png)
 ## Prerequisites 
 ### Software to Install
-`Only Linux has been tested`
+`Only Linux and Mac has been tested`
 * [gcloud command line](https://cloud.google.com/sdk/docs/install)
 * [terraform](https://www.terraform.io/downloads)
 * [helm](https://helm.sh/docs/intro/install/)
@@ -14,7 +13,7 @@ This [Terraform](http://terraform.io) module will allow you to deploy [Google Cl
 ### Accounts Needed
 * [PhoenixNAP](https://phoenixnap.com/bare-metal-cloud)
 * [Google Cloud Account](https://console.cloud.google.com/)
-* [MegaPort Account](https://docs.megaport.com/setting-up/registering/)
+* [Inlets Uplink](https://inlets.dev)
 ### Other
 * A domain name or subdomain you control DNS for
 ### Information to Gather
@@ -27,11 +26,6 @@ This [Terraform](http://terraform.io) module will allow you to deploy [Google Cl
 #### Google Cloud
 * Project ID
 * Region
-#### MegaPort
-* Username
-* Password
-* [Interconnect Location Name](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/choosing-colocation-facilities)
-* Physical Port ID (In PhoenixNAP Datacenter)
 #### Other
 * E-Mail Address
 * Domain Name(FQDN)
