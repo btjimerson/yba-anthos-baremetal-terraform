@@ -9,7 +9,7 @@ This [Terraform](http://terraform.io) module will allow you to deploy [Google Cl
 * [helm](https://helm.sh/docs/intro/install/)
 * [kubectl](https://kubernetes.io/docs/tasks/tools/)
 * [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-
+* [terrform-docs](https://terraform-docs.io/user-guide/installation/)
 ### Accounts Needed
 * [PhoenixNAP](https://phoenixnap.com/bare-metal-cloud)
 * [Google Cloud Account](https://console.cloud.google.com/)
@@ -38,48 +38,36 @@ gcloud auth application-default login # Follown any prompts
 ```
 ### Clone the Repo
 ```bash
-git clone https://github.com/GCPartner/phoenixnap-megaport-anthos.git
-cd phoenixnap-megaport-anthos
+git clone https://github.com/btjimerson/yba-anthos-baremetal-terraform
+cd yba-anthos-baremetal-terraform
 ```
-### Create your *terraform.tfvars*
-The following values will need to be modified by you.
+### Create your terraform variables file
+The easiest way to set the required variables is to use `terraform-docs`
 ```bash
-cat <<EOF >terraform.tfvars 
-cluster_name                  = "my-cluster"
-domain_name                   = "my.domain.tld"
-email_address                 = "my@email.tld"
-pnap_client_id                = "******"
-pnap_client_secret            = "******"
-pnap_network_name             = "PNAP-Private-Network-Name" # Created ahead of time in PNAP
-pnap_worker_node_count        = 1
-pnap_ha_control_plane         = false
-pnap_backend_megaport_vlan_id = 13 # Provided by PNAP
-gcp_project_id                = "my-project" # Created ahead of time in GCP
-gcp_region                    = "us-central1"
-megaport_username             = "my@email.tld"
-megaport_password             = "******"
-megaport_physical_port_id     = "ee03c69b-319c-411d-abd9-03eb999bafda" # Provided by PNAP
-EOF
+terraform-docs tfvars hcl .
 ```
+Any variables that are blank will need to be set in a `*.auto.tfvars` or `terraform.tfvars` file. Optionally, you can override variables that have a default value.
 ### Initialize Terraform
 ```bash
 terraform init
 ```
 ### Deploy the stack
 ```bash
-terraform apply --auto-approve
+terraform apply 
 ```
 ### What success looks like
 ```
-Apply complete! Resources: 78 added, 0 changed, 0 destroyed.
+Apply complete! Resources: 3 added, 1 changed, 0 destroyed.
 
 Outputs:
 
-pnap_bastion_host_ip = "131.153.202.107"
+nginx_ingress_ip = "34.68.2.89"
+pnap_bastion_host_ip = "131.153.240.245"
 pnap_bastion_host_username = "ubuntu"
-ssh_command_for_pnap = "ssh -i /home/c0dyhi11/.ssh/anthos-pnap-lunch-xj62n ubuntu@131.153.202.107"
-ssh_key_path = "/home/c0dyhi11/.ssh/anthos-pnap-lunch-xj62n"
-website = "https://test1.codyhill.org"
+ssh_command_for_pnap = "ssh -i /Users/bjimerson/.ssh/anthos-pnap-yba-abm-sark7 ubuntu@131.153.240.245"
+ssh_key_path = "/Users/bjimerson/.ssh/anthos-pnap-yba-abm-sark7"
+website = "https://yba.pintobean.xyz"
+yba_ui_ip = "35.223.31.53"
 ```
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
