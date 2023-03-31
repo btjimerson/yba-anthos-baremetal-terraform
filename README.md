@@ -22,7 +22,6 @@ This [Terraform](http://terraform.io) module will allow you to deploy [Google Cl
 * Client Secret
 * Location
 * Private Network Name
-* Backend MegaPort Mapping vLan ID
 #### Google Cloud
 * Project ID
 * Region
@@ -89,7 +88,7 @@ yba_ui_ip = "35.223.31.53"
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_baremetal_anthos_cluster"></a> [baremetal\_anthos\_cluster](#module\_baremetal\_anthos\_cluster) | btjimerson/anthos-baremetal-terraform | n/a |
+| <a name="module_baremetal_anthos_cluster"></a> [baremetal\_anthos\_cluster](#module\_baremetal\_anthos\_cluster) | github.com/btjimerson/anthos-baremetal-terraform | n/a |
 | <a name="module_cloud_services"></a> [cloud\_services](#module\_cloud\_services) | ./modules/cloud-services | n/a |
 | <a name="module_gcp_networking"></a> [gcp\_networking](#module\_gcp\_networking) | ./modules/gcp-networking | n/a |
 | <a name="module_gke_auth"></a> [gke\_auth](#module\_gke\_auth) | terraform-google-modules/kubernetes-engine/google//modules/auth | n/a |
