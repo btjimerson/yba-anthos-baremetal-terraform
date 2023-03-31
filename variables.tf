@@ -153,6 +153,14 @@ variable "inlets_uplink_provider_email_address" {
   description = "The email address to use for the provider"
   type        = string
 }
+variable "inlets_uplink_tunnels_predefined_token_name" {
+  description = "The name of the pre-defined token for tunnels"
+  type        = string
+}
+variable "inlets_uplink_tunnels_predefined_token" {
+  description = "The pre-defined token for tunnels"
+  type        = string
+}
 variable "yba_namespace" {
   description = "The name of the namespace for YBA"
   type        = string

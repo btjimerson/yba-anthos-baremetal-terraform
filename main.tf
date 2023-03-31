@@ -104,13 +104,15 @@ module "gke_auth" {
 }
 
 module "inlets_uplink" {
-  depends_on                           = [module.cloud_services]
-  source                               = "./modules/inlets-uplink"
-  inlets_uplink_provider_namespace     = var.inlets_uplink_provider_namespace
-  inlets_uplink_tunnels_namespace      = var.inlets_uplink_tunnels_namespace
-  inlets_uplink_license                = var.inlets_uplink_license
-  inlets_uplink_provider_domain        = var.inlets_uplink_provider_domain
-  inlets_uplink_provider_email_address = var.inlets_uplink_provider_email_address
+  depends_on                                  = [module.cloud_services]
+  source                                      = "./modules/inlets-uplink"
+  inlets_uplink_provider_namespace            = var.inlets_uplink_provider_namespace
+  inlets_uplink_tunnels_namespace             = var.inlets_uplink_tunnels_namespace
+  inlets_uplink_license                       = var.inlets_uplink_license
+  inlets_uplink_provider_domain               = var.inlets_uplink_provider_domain
+  inlets_uplink_provider_email_address        = var.inlets_uplink_provider_email_address
+  inlets_uplink_tunnels_predefined_token      = var.inlets_uplink_tunnels_predefined_token
+  inlets_uplink_tunnels_predefined_token_name = var.inlets_uplink_tunnels_predefined_token_name
 }
 
 module "yba" {

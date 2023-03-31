@@ -72,3 +72,34 @@ resource "helm_release" "inlets_uplink" {
     value = "nginx"
   }
 }
+
+// Namespace for customer tunnels
+resource "kubernetes_namespace" "inlets_uplink_tunnels_namespace" {
+  metadata {
+    name = var.inlets_uplink_tunnels_namespace
+  }
+}
+
+// License secret for tunnels
+resource "kubernetes_secret" "inlets_uplink_tunnels_license_secret" {
+  depends_on = [kubernetes_namespace.inlets_uplink_tunnels_namespace]
+  metadata {
+    name      = "inlets-uplink-license"
+    namespace = var.inlets_uplink_tunnels_namespace
+  }
+  data = {
+    license = var.inlets_uplink_license
+  }
+}
+
+//Pre-defined token secret for tunnels
+resource "kubernetes_secret" "inlets_uplink_tunnels_predefined_token_secret" {
+  depends_on = [kubernetes_namespace.inlets_uplink_tunnels_namespace]
+  metadata {
+    name      = var.inlets_uplink_tunnels_predefined_token_name
+    namespace = var.inlets_uplink_tunnels_namespace
+  }
+  data = {
+    token = var.inlets_uplink_tunnels_predefined_token
+  }
+}
