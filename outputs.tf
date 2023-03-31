@@ -30,5 +30,5 @@ output "nginx_ingress_ip" {
 
 output "yba_ui_ip" {
   value       = module.yba.yba_ui_ip
-  description = "The IP address of the nginx ingress controller"
+  description = "The IP address of the YBA UI"
 }
