@@ -332,7 +332,7 @@ resource "kubectl_manifest" "yba_operator_service_account" {
     kubectl_manifest.yba_operator_universe_crd,
     kubernetes_config_map.yba_operator_pull_secret_config_map
   ]
-  yaml_body          = data.http.yba_operator_service_account_yaml.body
+  yaml_body          = data.http.yba_operator_service_account_yaml.response_body
   override_namespace = var.yba_operator_namespace
 }
 
@@ -365,13 +365,20 @@ resource "kubectl_manifest" "yba_operator_deployment" {
   override_namespace = var.yba_operator_namespace
 }
 
-// Create the YBA admin user
-resource "kubectl_manifest" "yba_admin_user" {
+# Wait for a little bit for the YBA operator to start
+# before we create the admin user
+resource "time_sleep" "wait_for_yba_operator" {
   depends_on = [
     helm_release.yba,
     kubectl_manifest.yba_operator_deployment
   ]
-  yaml_body = <<EOT
+  create_duration = "20s"
+}
+
+// Create the YBA admin user
+resource "kubectl_manifest" "yba_admin_user" {
+  depends_on = [time_sleep.wait_for_yba_operator]
+  yaml_body  = <<EOT
 apiVersion: ybaoperator.io/v1alpha1
 kind: AdminUser
 metadata:

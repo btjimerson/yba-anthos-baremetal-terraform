@@ -18,6 +18,7 @@ resource "kubernetes_namespace" "inlets_uplink_provider_namespace" {
 
 // License key for inlets uplink
 resource "kubernetes_secret" "inlets_uplink_license" {
+  depends_on = [kubernetes_namespace.inlets_uplink_provider_namespace]
   metadata {
     name      = "inlets-uplink-license"
     namespace = var.inlets_uplink_provider_namespace
@@ -52,9 +53,10 @@ data "local_file" "nginx_ingress_ip" {
 
 // Inlets uplink helm release
 resource "helm_release" "inlets_uplink" {
-  name      = "inlets-uplink"
-  namespace = var.inlets_uplink_provider_namespace
-  chart     = "oci://ghcr.io/openfaasltd/inlets-uplink-provider"
+  depends_on = [kubernetes_namespace.inlets_uplink_provider_namespace]
+  name       = "inlets-uplink"
+  namespace  = var.inlets_uplink_provider_namespace
+  chart      = "oci://ghcr.io/openfaasltd/inlets-uplink-provider"
   set {
     name  = "clientRouter.domain"
     value = var.inlets_uplink_provider_domain
