@@ -35,7 +35,7 @@ provider "kubectl" {
 }
 
 module "baremetal_anthos_cluster" {
-  source             = "github.com/btjimerson/terraform-gcpartner-anthos-baremetal"
+  source             = "github.com/btjimerson/anthos-baremetal-terraform"
   cluster_name       = format("pnap-%s", var.cluster_name)
   cloud              = var.cloud
   pnap_client_id     = var.pnap_client_id
@@ -43,8 +43,7 @@ module "baremetal_anthos_cluster" {
   pnap_location      = var.pnap_location
   pnap_worker_type   = var.pnap_worker_type
   pnap_cp_type       = var.pnap_cp_type
-  private_network_id = var.pnap_private_network_name
-  public_network_id  = var.pnap_public_network_name
+  pnap_network_name  = var.pnap_network_name
   gcp_project_id     = var.gcp_project_id
   worker_node_count  = var.pnap_worker_node_count
   ha_control_plane   = var.pnap_ha_control_plane

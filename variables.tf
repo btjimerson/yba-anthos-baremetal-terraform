@@ -83,15 +83,10 @@ variable "email_address" {
   description = "The email address to use with Cert Manager"
   type        = string
 }
-variable "pnap_private_network_name" {
+variable "pnap_network_name" {
   type        = string
   default     = ""
   description = "The private network_id to use when creating server in PNAP"
-}
-variable "pnap_public_network_name" {
-  type        = string
-  default     = ""
-  description = "The public network_id to use when creating server in PNAP"
 }
 variable "acm_namespace" {
   description = "The name of the ACM default namespace"
