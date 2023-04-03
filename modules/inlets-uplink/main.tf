@@ -30,9 +30,15 @@ resource "kubernetes_secret" "inlets_uplink_license" {
 
 // nginx ingress controller
 resource "helm_release" "nginx_ingress" {
-  name       = "nginx-ingress"
-  repository = "https://helm.nginx.com/stable"
-  chart      = "nginx-ingress"
+  name             = "nginx-ingress"
+  repository       = "https://kubernetes.github.io/ingress-nginx"
+  chart            = "ingress-nginx"
+  namespace        = "ingress-nginx"
+  create_namespace = true
+  set {
+    name  = "rbac.create"
+    value = true
+  }
 }
 
 //The next 2 stanzas are a hack to get the ingress controller ip for output
@@ -40,7 +46,7 @@ resource "helm_release" "nginx_ingress" {
 resource "null_resource" "nginx_ingress_ip" {
   depends_on = [helm_release.nginx_ingress]
   provisioner "local-exec" {
-    command = "kubectl get svc nginx-ingress-controller -o jsonpath=\"{.status.loadBalancer.ingress[0].ip}\" > ${path.module}/nginx-ingress-ip.txt"
+    command = "kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonpath=\"{.status.loadBalancer.ingress[0].ip}\" > ${path.module}/nginx-ingress-ip.txt"
   }
 }
 
