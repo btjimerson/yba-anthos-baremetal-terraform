@@ -98,7 +98,7 @@ resource "null_resource" "create_tunnel_client" {
       "        - \"client\"",
       "        - \"--url=wss://${var.ingress_domain}/tunnels/${var.location_name}\"",
       "        - \"--token=${var.inlets_token}\"",
-      "        - \"--upstream=6443:kubernetes.default.svc:443\"",
+      "        - \"--upstream=6443=kubernetes.default.svc:443\"",
       "EOF",
       "kubectl -n kube-system get secret remote-admin-token -o jsonpath='{.data.token}' | base64 --decode >> remote-admin-token.txt"
     ]
