@@ -129,6 +129,7 @@ yba_ui_ip = "35.223.31.53"
 | <a name="input_gke_machine_type"></a> [gke\_machine\_type](#input\_gke\_machine\_type) | The machine type for GKE nodes | `string` | `"c2-standard-4"` | no |
 | <a name="input_gke_node_count"></a> [gke\_node\_count](#input\_gke\_node\_count) | The number of worker nodes for the GKE cluster | `number` | `1` | no |
 | <a name="input_gke_release_channel"></a> [gke\_release\_channel](#input\_gke\_release\_channel) | The release channel for GKE | `string` | `"RAPID"` | no |
+| <a name="input_ingress_domain"></a> [ingress\_domain](#input\_ingress\_domain) | The fully qualified domain name of the GKE ingress controller | `string` | `"tunnels.pintobean.xyz"` | no |
 | <a name="input_inlets_uplink_license"></a> [inlets\_uplink\_license](#input\_inlets\_uplink\_license) | The license key for uplink | `string` | n/a | yes |
 | <a name="input_inlets_uplink_provider_domain"></a> [inlets\_uplink\_provider\_domain](#input\_inlets\_uplink\_provider\_domain) | The domain to use for the provider | `string` | n/a | yes |
 | <a name="input_inlets_uplink_provider_email_address"></a> [inlets\_uplink\_provider\_email\_address](#input\_inlets\_uplink\_provider\_email\_address) | The email address to use for the provider | `string` | n/a | yes |
@@ -136,6 +137,7 @@ yba_ui_ip = "35.223.31.53"
 | <a name="input_inlets_uplink_tunnels_namespace"></a> [inlets\_uplink\_tunnels\_namespace](#input\_inlets\_uplink\_tunnels\_namespace) | The name of the namespace to install uplink tunnels | `string` | `"tunnels"` | no |
 | <a name="input_inlets_uplink_tunnels_predefined_token"></a> [inlets\_uplink\_tunnels\_predefined\_token](#input\_inlets\_uplink\_tunnels\_predefined\_token) | The pre-defined token for tunnels | `string` | n/a | yes |
 | <a name="input_inlets_uplink_tunnels_predefined_token_name"></a> [inlets\_uplink\_tunnels\_predefined\_token\_name](#input\_inlets\_uplink\_tunnels\_predefined\_token\_name) | The name of the pre-defined token for tunnels | `string` | n/a | yes |
+| <a name="input_location_name"></a> [location\_name](#input\_location\_name) | The name of the edge location | `string` | `"store-45678"` | no |
 | <a name="input_pnap_client_id"></a> [pnap\_client\_id](#input\_pnap\_client\_id) | The client id for authentication to pnap | `string` | n/a | yes |
 | <a name="input_pnap_client_secret"></a> [pnap\_client\_secret](#input\_pnap\_client\_secret) | The client secret for authentication to pnap | `string` | n/a | yes |
 | <a name="input_pnap_cp_type"></a> [pnap\_cp\_type](#input\_pnap\_cp\_type) | The type of PNAP server to deploy for control plane nodes | `string` | `"s2.c1.medium"` | no |
@@ -169,6 +171,7 @@ yba_ui_ip = "35.223.31.53"
 | <a name="input_yba_universe_management_namespace"></a> [yba\_universe\_management\_namespace](#input\_yba\_universe\_management\_namespace) | The namespace for the universement management sa and role | `string` | `"kube-system"` | no |
 | <a name="input_yba_universe_management_sa"></a> [yba\_universe\_management\_sa](#input\_yba\_universe\_management\_sa) | The name of the universe management service account | `string` | `"yugabyte-platform-universe-management"` | no |
 | <a name="input_yba_version"></a> [yba\_version](#input\_yba\_version) | The version of YBA to install | `string` | n/a | yes |
+| <a name="input_yugabyte_nodes_namespace"></a> [yugabyte\_nodes\_namespace](#input\_yugabyte\_nodes\_namespace) | The namespace where Yugabyte nodes will be deployed | `string` | `"yb-nodes"` | no |
 
 ## Outputs
 
