@@ -68,7 +68,7 @@ resource "kubernetes_config_map" "yba_pull_secret_config_map" {
     namespace = var.yba_namespace
   }
   data = {
-    "yugabyte_pull_secret.yaml" = <<EOT
+    "yugabyte-pull-secret.yaml" = <<EOT
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -293,7 +293,7 @@ resource "kubernetes_config_map" "yba_operator_pull_secret_config_map" {
     namespace = var.yba_operator_namespace
   }
   data = {
-    "yugabyte_pull_secret.yaml" = <<EOT
+    "yugabyte-pull-secret.yaml" = <<EOT
 apiVersion: v1
 kind: ConfigMap
 metadata:
