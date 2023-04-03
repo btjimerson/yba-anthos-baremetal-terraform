@@ -9,6 +9,10 @@ terraform {
   }
 }
 
+locals {
+  ssh_command = "-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${var.ssh_key_path} ${var.username}@${var.bastion_ip}"
+}
+
 // Namespace for inlets uplink provider
 resource "kubernetes_namespace" "inlets_uplink_provider_namespace" {
   metadata {
@@ -41,21 +45,14 @@ resource "helm_release" "nginx_ingress" {
   }
 }
 
-//The next 2 stanzas are a hack to get the ingress controller ip for output
-// nginx ingress controll ip from kubectl
-resource "null_resource" "nginx_ingress_ip" {
+data "external" "nginx_ingress_ip" {
   depends_on = [helm_release.nginx_ingress]
-  provisioner "local-exec" {
-    command = "kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonpath=\"{.status.loadBalancer.ingress[0].ip}\" > ${path.module}/nginx-ingress-ip.txt"
-  }
+  program = [
+    "sh",
+    "-c",
+    "jq -n --arg content \"$(${local.ssh_command}) kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')\" '{$content}'"
+  ]
 }
-
-// Write nginx ingress controller ip to file
-data "local_file" "nginx_ingress_ip" {
-  depends_on = [null_resource.nginx_ingress_ip]
-  filename   = "${path.module}/nginx-ingress-ip.txt"
-}
-//End hack
 
 // Inlets uplink helm release
 resource "helm_release" "inlets_uplink" {

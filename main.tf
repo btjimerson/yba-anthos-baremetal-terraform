@@ -35,26 +35,19 @@ provider "kubectl" {
 }
 
 module "baremetal_anthos_cluster" {
-  source                   = "github.com/btjimerson/anthos-baremetal-terraform"
-  cluster_name             = format("pnap-%s", var.cluster_name)
-  cloud                    = var.cloud
-  pnap_client_id           = var.pnap_client_id
-  pnap_client_secret       = var.pnap_client_secret
-  pnap_location            = var.pnap_location
-  pnap_worker_type         = var.pnap_worker_type
-  pnap_cp_type             = var.pnap_cp_type
-  pnap_network_name        = var.pnap_network_name
-  gcp_project_id           = var.gcp_project_id
-  worker_node_count        = var.pnap_worker_node_count
-  ha_control_plane         = var.pnap_ha_control_plane
-  location_name            = var.location_name
-  ingress_domain           = var.ingress_domain
-  yugabyte_nodes_namespace = var.yugabyte_nodes_namespace
-  inlets_token             = var.inlets_uplink_tunnels_predefined_token
-}
-
-locals {
-  redis_load_balancer_ip = cidrhost(module.baremetal_anthos_cluster.private_subnet, -4)
+  source             = "github.com/btjimerson/terraform-gcpartner-anthos-baremetal"
+  cluster_name       = format("pnap-%s", var.cluster_name)
+  cloud              = var.cloud
+  pnap_client_id     = var.pnap_client_id
+  pnap_client_secret = var.pnap_client_secret
+  pnap_location      = var.pnap_location
+  pnap_worker_type   = var.pnap_worker_type
+  pnap_cp_type       = var.pnap_cp_type
+  private_network_id = var.pnap_private_network_name
+  public_network_id  = var.pnap_public_network_name
+  gcp_project_id     = var.gcp_project_id
+  worker_node_count  = var.pnap_worker_node_count
+  ha_control_plane   = var.pnap_ha_control_plane
 }
 
 module "gcp_networking" {
@@ -77,24 +70,30 @@ module "gke_cluster" {
 }
 
 module "on_prem_services" {
-  depends_on             = [module.baremetal_anthos_cluster]
-  source                 = "./modules/on-prem-services"
-  ssh_key_path           = module.baremetal_anthos_cluster.ssh_key_path
-  bastion_ip             = module.baremetal_anthos_cluster.bastion_host_ip
-  username               = module.baremetal_anthos_cluster.bastion_host_username
-  redis_load_balancer_ip = local.redis_load_balancer_ip
+  depends_on               = [module.baremetal_anthos_cluster]
+  source                   = "./modules/on-prem-services"
+  ssh_key_path             = module.baremetal_anthos_cluster.ssh_key_path
+  bastion_ip               = module.baremetal_anthos_cluster.bastion_host_ip
+  username                 = module.baremetal_anthos_cluster.bastion_host_username
+  location_name            = var.location_name
+  ingress_domain           = var.ingress_domain
+  yugabyte_nodes_namespace = var.yugabyte_nodes_namespace
+  inlets_token             = var.inlets_uplink_tunnels_predefined_token_name
+  ssh_key = {
+    private_key = module.baremetal_anthos_cluster.ssh_key.private_key
+    public_key  = module.baremetal_anthos_cluster.ssh_key.public_key
+  }
 }
 
 module "cloud_services" {
-  depends_on             = [module.gke_cluster, module.on_prem_services]
-  source                 = "./modules/cloud-services"
-  cluster_name           = format("gke-%s", var.cluster_name)
-  domain_name            = var.domain_name
-  email_address          = var.email_address
-  cert_manager_version   = var.cert_manager_version
-  gcp_region             = var.gcp_region
-  gcp_project_id         = var.gcp_project_id
-  redis_load_balancer_ip = local.redis_load_balancer_ip
+  depends_on           = [module.gke_cluster, module.on_prem_services]
+  source               = "./modules/cloud-services"
+  cluster_name         = format("gke-%s", var.cluster_name)
+  domain_name          = var.domain_name
+  email_address        = var.email_address
+  cert_manager_version = var.cert_manager_version
+  gcp_region           = var.gcp_region
+  gcp_project_id       = var.gcp_project_id
 }
 
 # Kubeconfig
@@ -118,6 +117,9 @@ module "inlets_uplink" {
   inlets_uplink_provider_email_address        = var.inlets_uplink_provider_email_address
   inlets_uplink_tunnels_predefined_token      = var.inlets_uplink_tunnels_predefined_token
   inlets_uplink_tunnels_predefined_token_name = var.inlets_uplink_tunnels_predefined_token_name
+  ssh_key_path                                = module.baremetal_anthos_cluster.ssh_key_path
+  bastion_ip                                  = module.baremetal_anthos_cluster.bastion_host_ip
+  username                                    = module.baremetal_anthos_cluster.bastion_host_username
 }
 
 # YugabyteDB Anywhere

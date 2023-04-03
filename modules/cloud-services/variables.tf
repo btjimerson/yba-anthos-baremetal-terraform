@@ -28,7 +28,3 @@ variable "gcp_project_id" {
   type        = string
 }
 
-variable "redis_load_balancer_ip" {
-  description = "The IP Address of the Redis Load Balancer IP"
-  type        = string
-}

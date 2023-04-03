@@ -1,3 +1,17 @@
+variable "ssh_key_path" {
+  description = "SSH Public and Private Key"
+}
+
+variable "bastion_ip" {
+  type        = string
+  description = "The bastion host/admin workstation public IP Address"
+}
+
+variable "username" {
+  type        = string
+  description = "The username used to ssh to hosts"
+}
+
 variable "inlets_uplink_provider_namespace" {
   description = "The name of the namespace to install uplink provider"
   type        = string
