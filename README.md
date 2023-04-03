@@ -88,7 +88,7 @@ yba_ui_ip = "35.223.31.53"
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_baremetal_anthos_cluster"></a> [baremetal\_anthos\_cluster](#module\_baremetal\_anthos\_cluster) | github.com/btjimerson/terraform-gcpartner-anthos-baremetal | n/a |
+| <a name="module_baremetal_anthos_cluster"></a> [baremetal\_anthos\_cluster](#module\_baremetal\_anthos\_cluster) | github.com/btjimerson/anthos-baremetal-terraform | n/a |
 | <a name="module_cloud_services"></a> [cloud\_services](#module\_cloud\_services) | ./modules/cloud-services | n/a |
 | <a name="module_gcp_networking"></a> [gcp\_networking](#module\_gcp\_networking) | ./modules/gcp-networking | n/a |
 | <a name="module_gke_auth"></a> [gke\_auth](#module\_gke\_auth) | terraform-google-modules/kubernetes-engine/google//modules/auth | n/a |
@@ -143,8 +143,7 @@ yba_ui_ip = "35.223.31.53"
 | <a name="input_pnap_cp_type"></a> [pnap\_cp\_type](#input\_pnap\_cp\_type) | The type of PNAP server to deploy for control plane nodes | `string` | `"s2.c1.medium"` | no |
 | <a name="input_pnap_ha_control_plane"></a> [pnap\_ha\_control\_plane](#input\_pnap\_ha\_control\_plane) | Do you want a highly available control plane? | `bool` | `true` | no |
 | <a name="input_pnap_location"></a> [pnap\_location](#input\_pnap\_location) | The pnap region to deploy nodes to | `string` | `"PHX"` | no |
-| <a name="input_pnap_private_network_name"></a> [pnap\_private\_network\_name](#input\_pnap\_private\_network\_name) | The private network\_id to use when creating server in PNAP | `string` | `""` | no |
-| <a name="input_pnap_public_network_name"></a> [pnap\_public\_network\_name](#input\_pnap\_public\_network\_name) | The public network\_id to use when creating server in PNAP | `string` | `""` | no |
+| <a name="input_pnap_network_name"></a> [pnap\_network\_name](#input\_pnap\_network\_name) | The private network\_id to use when creating server in PNAP | `string` | `""` | no |
 | <a name="input_pnap_worker_node_count"></a> [pnap\_worker\_node\_count](#input\_pnap\_worker\_node\_count) | The number of worker nodes in PNAP | `number` | `1` | no |
 | <a name="input_pnap_worker_type"></a> [pnap\_worker\_type](#input\_pnap\_worker\_type) | The type of PNAP server to deploy for worker nodes | `string` | `"s2.c1.medium"` | no |
 | <a name="input_yba_admin_user_email"></a> [yba\_admin\_user\_email](#input\_yba\_admin\_user\_email) | The email address for the YBA admin user | `string` | n/a | yes |
