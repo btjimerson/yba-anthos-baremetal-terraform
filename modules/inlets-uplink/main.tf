@@ -50,7 +50,7 @@ data "external" "nginx_ingress_ip" {
   program = [
     "sh",
     "-c",
-    "jq -n --arg content \"$(${local.ssh_command}) kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')\" '{$content}'"
+    "jq -n --arg content \"$(${local.ssh_command}) kubectl get svc nginx-ingress-ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'\" '{$content}'"
   ]
 }
 
