@@ -77,7 +77,7 @@ module "on_prem_services" {
   location_name            = var.location_name
   ingress_domain           = var.ingress_domain
   yugabyte_nodes_namespace = var.yugabyte_nodes_namespace
-  inlets_token             = var.inlets_uplink_tunnels_predefined_token_name
+  inlets_token             = var.inlets_uplink_tunnels_predefined_token
   ssh_key = {
     private_key = module.baremetal_anthos_cluster.ssh_key.private_key
     public_key  = module.baremetal_anthos_cluster.ssh_key.public_key
