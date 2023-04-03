@@ -19,13 +19,13 @@ output "pnap_bastion_host_username" {
 }
 
 output "remote_admin_token" {
-    description = "The token for the remote admin service account"
-    value = module.baremetal_anthos_cluster.remote_admin_token
+  description = "The token for the remote admin service account"
+  value       = module.baremetal_anthos_cluster.remote_admin_token
 }
 
 output "remote_kubeconfig" {
-    description = "The kubeconfig for the remote Kubernetes cluster"
-    value = module.baremetal_anthos_cluster.remote_kubeconfig
+  description = "The kubeconfig for the remote Kubernetes cluster"
+  value       = module.baremetal_anthos_cluster.remote_kubeconfig
 }
 
 output "nginx_ingress_ip" {

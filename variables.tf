@@ -278,3 +278,20 @@ variable "yba_admin_user_environment" {
   description = "The environment for the YBA admin user"
   type        = string
 }
+variable "yugabyte_nodes_namespace" {
+  type        = string
+  default     = "yb-nodes"
+  description = "The namespace where Yugabyte nodes will be deployed"
+}
+
+variable "location_name" {
+  type        = string
+  default     = "store-45678"
+  description = "The name of the edge location"
+}
+
+variable "ingress_domain" {
+  type        = string
+  default     = "tunnels.pintobean.xyz"
+  description = "The fully qualified domain name of the GKE ingress controller"
+}
