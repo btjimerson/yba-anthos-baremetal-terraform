@@ -75,7 +75,7 @@ module "on_prem_services" {
   bastion_ip               = module.baremetal_anthos_cluster.bastion_host_ip
   username                 = module.baremetal_anthos_cluster.bastion_host_username
   location_name            = var.location_name
-  ingress_domain           = var.ingress_domain
+  ingress_domain           = var.inlets_uplink_provider_domain
   yugabyte_nodes_namespace = var.yugabyte_nodes_namespace
   inlets_token             = var.inlets_uplink_tunnels_predefined_token
   ssh_key = {
@@ -88,11 +88,16 @@ module "cloud_services" {
   depends_on           = [module.gke_cluster, module.on_prem_services]
   source               = "./modules/cloud-services"
   cluster_name         = format("gke-%s", var.cluster_name)
-  domain_name          = var.domain_name
-  email_address        = var.email_address
   cert_manager_version = var.cert_manager_version
   gcp_region           = var.gcp_region
   gcp_project_id       = var.gcp_project_id
+  inlets_uplink_provider_namespace            = var.inlets_uplink_provider_namespace
+  inlets_uplink_tunnels_namespace             = var.inlets_uplink_tunnels_namespace
+  inlets_uplink_license                       = var.inlets_uplink_license
+  inlets_uplink_provider_domain               = var.inlets_uplink_provider_domain
+  inlets_uplink_provider_email_address        = var.acme_email_address
+  inlets_uplink_tunnels_predefined_token      = var.inlets_uplink_tunnels_predefined_token
+  inlets_uplink_tunnels_predefined_token_name = var.inlets_uplink_tunnels_predefined_token_name
 }
 
 # Kubeconfig
@@ -103,22 +108,6 @@ module "gke_auth" {
   project_id   = var.gcp_project_id
   location     = var.gcp_region
   cluster_name = format("gke-%s", var.cluster_name)
-}
-
-#Inlets uplink server
-module "inlets_uplink" {
-  depends_on                                  = [module.cloud_services]
-  source                                      = "./modules/inlets-uplink"
-  inlets_uplink_provider_namespace            = var.inlets_uplink_provider_namespace
-  inlets_uplink_tunnels_namespace             = var.inlets_uplink_tunnels_namespace
-  inlets_uplink_license                       = var.inlets_uplink_license
-  inlets_uplink_provider_domain               = var.inlets_uplink_provider_domain
-  inlets_uplink_provider_email_address        = var.inlets_uplink_provider_email_address
-  inlets_uplink_tunnels_predefined_token      = var.inlets_uplink_tunnels_predefined_token
-  inlets_uplink_tunnels_predefined_token_name = var.inlets_uplink_tunnels_predefined_token_name
-  ssh_key_path                                = module.baremetal_anthos_cluster.ssh_key_path
-  bastion_ip                                  = module.baremetal_anthos_cluster.bastion_host_ip
-  username                                    = module.baremetal_anthos_cluster.bastion_host_username
 }
 
 # YugabyteDB Anywhere
@@ -169,7 +158,7 @@ resource "google_gke_hub_membership" "membership" {
 
 # Anthos config managmement
 resource "google_gke_hub_feature_membership" "feature_member" {
-  depends_on = [module.inlets_uplink]
+  depends_on = [module.cloud_services]
   location   = "global"
   membership = google_gke_hub_membership.membership.membership_id
   feature    = "configmanagement"

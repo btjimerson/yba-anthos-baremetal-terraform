@@ -1,4 +1,4 @@
 output "yba_ui_ip" {
-  value       = data.local_file.yba_ui_ip.content
+  value       = data.external.yba_ui_ip.result.content
   description = "The IP address of the YBA UI"
 }

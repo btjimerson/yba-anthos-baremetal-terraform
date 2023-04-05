@@ -1,6 +1,6 @@
 output "remote_admin_token" {
   description = "The token for the remote admin service account"
-  value       = data.external.remote_admin_token.result.content
+  value       = base64decode(data.external.remote_admin_token.result.content)
 }
 
 output "remote_kubeconfig" {

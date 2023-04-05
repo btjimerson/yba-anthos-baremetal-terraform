@@ -29,7 +29,7 @@ output "remote_kubeconfig" {
 }
 
 output "nginx_ingress_ip" {
-  value       = module.inlets_uplink.nginx_ingress_ip
+  value       = module.cloud_services.nginx_ingress_ip
   description = "The IP address of the nginx ingress controler"
 }
 

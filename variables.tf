@@ -70,16 +70,12 @@ variable "gcp_router_asn" {
   type        = number
   default     = 16550
 }
-variable "domain_name" {
-  description = "The domain name to use for DNS records"
-  type        = string
-}
 variable "cert_manager_version" {
   description = "The version of cert manager to install"
   type        = string
   default     = "v1.8.0"
 }
-variable "email_address" {
+variable "acme_email_address" {
   description = "The email address to use with Cert Manager"
   type        = string
 }
@@ -147,10 +143,6 @@ variable "inlets_uplink_license" {
 }
 variable "inlets_uplink_provider_domain" {
   description = "The domain to use for the provider"
-  type        = string
-}
-variable "inlets_uplink_provider_email_address" {
-  description = "The email address to use for the provider"
   type        = string
 }
 variable "inlets_uplink_tunnels_predefined_token_name" {
@@ -288,8 +280,4 @@ variable "location_name" {
   default     = "store-45678"
   description = "The name of the edge location"
 }
-variable "ingress_domain" {
-  type        = string
-  default     = "tunnels.pintobean.xyz"
-  description = "The fully qualified domain name of the GKE ingress controller"
-}
+

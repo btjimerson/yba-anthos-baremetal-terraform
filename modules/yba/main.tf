@@ -98,26 +98,17 @@ resource "helm_release" "yba" {
   version    = var.yba_version
   repository = "https://charts.yugabyte.com"
   chart      = "yugaware"
-  set {
-    name  = "loadBalancerSourceRanges"
-    value = ""
-  }
 }
 
-//The next 2 stanzas are a hack to get the YBA UI ip for output
-resource "null_resource" "yba_ui_ip" {
+// Get the IP address for YBA
+data "external" "yba_ui_ip" {
   depends_on = [helm_release.yba]
-  provisioner "local-exec" {
-    command = "kubectl get svc yugaware-yugaware-ui -n ${var.yba_namespace} -o jsonpath=\"{.status.loadBalancer.ingress[0].ip}\" > ${path.module}/yba-ui-ip.txt"
-  }
+  program = [
+    "sh",
+    "-c",
+    "jq -n --arg content \"kubectl get svc yugaware-yugaware-ui -n ${var.yba_namespace} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'\" '{$content}'"
+  ]
 }
-
-// Write YBA UI ip to file
-data "local_file" "yba_ui_ip" {
-  depends_on = [null_resource.yba_ui_ip]
-  filename   = "${path.module}/yba-ui-ip.txt"
-}
-//End hack
 
 // Create the YBA service account
 resource "kubernetes_service_account" "yba_sa" {
