@@ -34,6 +34,16 @@ output "nginx_ingress_ip" {
 }
 
 output "yba_ui_ip" {
-  value       = module.yba.yba_ui_ip
+  value       = module.cloud_services.yba_ui_ip
   description = "The IP address of the YBA UI"
+}
+
+output "cluster1_secret" {
+  description = "The remote secret for Istio cluster 1 (GKE)"
+  value       = module.cloud_services.cluster1_secret
+}
+
+output "cluster2_secret" {
+  description = "The remote secret for Istio cluster 1 (on prem)"
+  value       = module.on_prem_services.cluster2_secret
 }

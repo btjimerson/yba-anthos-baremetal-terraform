@@ -1,5 +1,5 @@
 output "cluster_id" {
-  description = "The cluster's ID"
+  description = "The cluster's id"
   value       = google_container_cluster.primary.id
 }
 

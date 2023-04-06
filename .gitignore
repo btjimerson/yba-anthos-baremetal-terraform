@@ -35,5 +35,4 @@ terraform.tfvars
 .idea
 
 # Generated files
-nginx-ingress-ip.txt
-yba-ui-ip.txt
+istio*

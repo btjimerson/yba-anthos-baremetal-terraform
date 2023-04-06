@@ -84,46 +84,46 @@ variable "pnap_network_name" {
   default     = ""
   description = "The private network_id to use when creating server in PNAP"
 }
-variable "acm_namespace" {
-  description = "The name of the ACM default namespace"
+variable "cloud_acm_namespace" {
+  description = "The name of the ACM for GKE default namespace"
   type        = string
   default     = "config-management-system"
 }
-variable "acm_git_repo" {
-  description = "The git repo URL for Anthos config management"
+variable "cloud_acm_git_repo" {
+  description = "The git repo URL for ACM for GKE"
   type        = string
 }
-variable "acm_repo_branch" {
-  description = "The repo branch to sync for ACM"
+variable "cloud_acm_repo_branch" {
+  description = "The repo branch to sync for ACM for GKE"
   type        = string
   default     = "main"
 }
-variable "acm_repo_authentication" {
-  description = "The secret type for the ACM repo"
+variable "cloud_acm_repo_authentication" {
+  description = "The secret type for the ACM for GKE repo"
   type        = string
   default     = "none"
   validation {
-    condition     = contains(["ssh", "cookiefile", "gcenode", "gcpserviceaccount", "token", "none"], var.acm_repo_authentication)
+    condition     = contains(["ssh", "cookiefile", "gcenode", "gcpserviceaccount", "token", "none"], var.cloud_acm_repo_authentication)
     error_message = "Must be one of [ssh cookiefile gcenode gcpserviceaccount token none]"
   }
 }
-variable "acm_repo_username" {
+variable "cloud_acm_repo_username" {
   description = "The username to use for authentication to Git (only required if authentication is token)"
   type        = string
   default     = ""
 }
-variable "acm_repo_pat" {
+variable "cloud_acm_repo_pat" {
   description = "The personal access token for authentication to Git (only required if authentication is token)"
   type        = string
   default     = ""
   sensitive   = true
 }
-variable "acm_config_sync_source_format" {
+variable "cloud_acm_config_sync_source_format" {
   description = "The config sync source format (one of hierarchical | unstructured)"
   type        = string
   default     = "unstructured"
   validation {
-    condition     = contains(["unstructured", "hierarchical"], var.acm_config_sync_source_format)
+    condition     = contains(["unstructured", "hierarchical"], var.cloud_acm_config_sync_source_format)
     error_message = "Must be on of [hierarchical unstructured]"
   }
 }
@@ -280,4 +280,7 @@ variable "location_name" {
   default     = "store-45678"
   description = "The name of the edge location"
 }
-
+variable "istio_version" {
+  description = "The version of Istio to install"
+  type        = string
+}
