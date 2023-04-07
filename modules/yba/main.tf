@@ -270,12 +270,11 @@ resource "kubectl_manifest" "yba_operator_universe_crd" {
 }
 
 // Namespace for YBA operator
-/*
 resource "kubernetes_namespace" "yba_operator_namespace" {
   metadata {
     name = var.yba_operator_namespace
   }
-}*/
+}
 
 // Config map for YBA operator pull secret
 resource "kubernetes_config_map" "yba_operator_pull_secret_config_map" {

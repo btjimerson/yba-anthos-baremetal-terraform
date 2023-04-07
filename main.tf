@@ -173,42 +173,6 @@ module "gke_auth" {
   cluster_name = format("gke-%s", var.cluster_name)
 }
 
-# YugabyteDB Anywhere
-/*
-module "yba" {
-  depends_on = [
-    module.cloud_services,
-    module.gke_auth
-  ]
-  source                                       = "./modules/yba"
-  yba_admin_user_email                         = var.yba_admin_user_email
-  yba_admin_user_environment                   = var.yba_admin_user_environment
-  yba_admin_user_full_name                     = var.yba_admin_user_full_name
-  yba_admin_user_kubernetes_name               = var.yba_admin_user_kubernetes_name
-  yba_admin_user_password                      = var.yba_admin_user_password
-  yba_kubeconfig                               = module.gke_auth.kubeconfig_raw
-  yba_kubeconfig_config_map                    = var.yba_kubeconfig_config_map
-  yba_namespace                                = var.yba_namespace
-  yba_operator_admin_crd_manifest              = var.yba_operator_admin_crd_manifest
-  yba_operator_cloud_provider_crd_manifest     = var.yba_operator_cloud_provider_crd_manifest
-  yba_operator_cluster_role_binding_manifest   = var.yba_operator_cluster_role_binding_manifest
-  yba_operator_cluster_role_manifest           = var.yba_operator_cluster_role_manifest
-  yba_operator_deployment_manifest             = var.yba_operator_deployment_manifest
-  yba_operator_service_account_manifest        = var.yba_operator_service_account_manifest
-  yba_operator_github_repo                     = var.yba_operator_github_repo
-  yba_operator_namespace                       = var.yba_operator_namespace
-  yba_operator_universe_crd_manifest           = var.yba_operator_universe_crd_manifest
-  yba_pull_secret                              = var.yba_pull_secret
-  yba_role                                     = var.yba_role
-  yba_role_binding                             = var.yba_role_binding
-  yba_sa                                       = var.yba_sa
-  yba_universe_management_cluster_role         = var.yba_universe_management_cluster_role
-  yba_universe_management_cluster_role_binding = var.yba_universe_management_cluster_role_binding
-  yba_universe_management_namespace            = var.yba_universe_management_namespace
-  yba_universe_management_sa                   = var.yba_universe_management_sa
-  yba_version                                  = var.yba_version
-}
-*/
 
 
 

@@ -198,6 +198,20 @@ data "external" "cluster1_secret" {
   ]
 }
 
+// Remove istio installation
+resource "null_resource" "remove_istio" {
+  depends_on = [
+    null_resource.install_istio,
+    null_resource.label_istio_namespace,
+    null_resource.apply_istio_cluster_configuration,
+    null_resource.apply_east_west_gateway,
+    null_resource.expose_istio_services
+  ]
+  provisioner "local-exec" {
+    command = "rm -rf istio-${var.istio_version}"
+  }
+}
+
 // Install and configure YBA
 module "yba" {
   source = "../yba"
