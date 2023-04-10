@@ -35,18 +35,20 @@ provider "kubectl" {
 }
 
 module "baremetal_anthos_cluster" {
-  source             = "github.com/btjimerson/anthos-baremetal-terraform"
-  cluster_name       = format("pnap-%s", var.cluster_name)
-  cloud              = var.cloud
-  pnap_client_id     = var.pnap_client_id
-  pnap_client_secret = var.pnap_client_secret
-  pnap_location      = var.pnap_location
-  pnap_worker_type   = var.pnap_worker_type
-  pnap_cp_type       = var.pnap_cp_type
-  pnap_network_name  = var.pnap_network_name
-  gcp_project_id     = var.gcp_project_id
-  worker_node_count  = var.pnap_worker_node_count
-  ha_control_plane   = var.pnap_ha_control_plane
+  source                    = "github.com/btjimerson/anthos-baremetal-terraform"
+  cluster_name              = format("pnap-%s", var.cluster_name)
+  cloud                     = var.cloud
+  pnap_client_id            = var.pnap_client_id
+  pnap_client_secret        = var.pnap_client_secret
+  pnap_location             = var.pnap_location
+  pnap_worker_type          = var.pnap_worker_type
+  pnap_cp_type              = var.pnap_cp_type
+  pnap_private_network_name = var.pnap_private_network_name
+  pnap_public_network_name  = var.pnap_public_network_name
+  gcp_project_id            = var.gcp_project_id
+  worker_node_count         = var.pnap_worker_node_count
+  ha_control_plane          = var.pnap_ha_control_plane
+  load_balancer_ips         = var.pnap_load_balancer_ips
 }
 
 module "gcp_networking" {
@@ -86,28 +88,28 @@ module "on_prem_services" {
 }
 
 module "cloud_services" {
-  depends_on                                  = [module.gke_cluster, module.on_prem_services, module.gke_auth]
-  source                                      = "./modules/cloud-services"
-  cluster_name                                = format("gke-%s", var.cluster_name)
-  cert_manager_version                        = var.cert_manager_version
-  gcp_region                                  = var.gcp_region
-  gcp_project_id                              = var.gcp_project_id
-  acm_config_sync_source_format               = var.cloud_acm_config_sync_source_format
-  acm_git_repo                                = var.cloud_acm_git_repo
-  acm_namespace                               = var.cloud_acm_namespace
-  acm_repo_authentication                     = var.cloud_acm_repo_authentication
-  acm_repo_branch                             = var.cloud_acm_repo_branch
-  acm_repo_pat                                = var.cloud_acm_repo_pat
-  acm_repo_username                           = var.cloud_acm_repo_username
-  inlets_uplink_provider_namespace            = var.inlets_uplink_provider_namespace
-  inlets_uplink_tunnels_namespace             = var.inlets_uplink_tunnels_namespace
-  inlets_uplink_license                       = var.inlets_uplink_license
-  inlets_uplink_provider_domain               = var.inlets_uplink_provider_domain
-  inlets_uplink_provider_email_address        = var.acme_email_address
-  inlets_uplink_tunnels_predefined_token      = var.inlets_uplink_tunnels_predefined_token
-  inlets_uplink_tunnels_predefined_token_name = var.inlets_uplink_tunnels_predefined_token_name
-  gke_cluster_id                              = module.gke_cluster.cluster_id
-  istio_version                               = var.istio_version
+  depends_on                                   = [module.gke_cluster, module.on_prem_services, module.gke_auth]
+  source                                       = "./modules/cloud-services"
+  cluster_name                                 = format("gke-%s", var.cluster_name)
+  cert_manager_version                         = var.cert_manager_version
+  gcp_region                                   = var.gcp_region
+  gcp_project_id                               = var.gcp_project_id
+  acm_config_sync_source_format                = var.cloud_acm_config_sync_source_format
+  acm_git_repo                                 = var.cloud_acm_git_repo
+  acm_namespace                                = var.cloud_acm_namespace
+  acm_repo_authentication                      = var.cloud_acm_repo_authentication
+  acm_repo_branch                              = var.cloud_acm_repo_branch
+  acm_repo_pat                                 = var.cloud_acm_repo_pat
+  acm_repo_username                            = var.cloud_acm_repo_username
+  inlets_uplink_provider_namespace             = var.inlets_uplink_provider_namespace
+  inlets_uplink_tunnels_namespace              = var.inlets_uplink_tunnels_namespace
+  inlets_uplink_license                        = var.inlets_uplink_license
+  inlets_uplink_provider_domain                = var.inlets_uplink_provider_domain
+  inlets_uplink_provider_email_address         = var.acme_email_address
+  inlets_uplink_tunnels_predefined_token       = var.inlets_uplink_tunnels_predefined_token
+  inlets_uplink_tunnels_predefined_token_name  = var.inlets_uplink_tunnels_predefined_token_name
+  gke_cluster_id                               = module.gke_cluster.cluster_id
+  istio_version                                = var.istio_version
   yba_admin_user_email                         = var.yba_admin_user_email
   yba_admin_user_environment                   = var.yba_admin_user_environment
   yba_admin_user_full_name                     = var.yba_admin_user_full_name

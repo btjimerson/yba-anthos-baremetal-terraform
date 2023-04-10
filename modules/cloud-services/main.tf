@@ -214,7 +214,7 @@ resource "null_resource" "remove_istio" {
 
 // Install and configure YBA
 module "yba" {
-  source = "../yba"
+  source                                       = "../yba"
   yba_admin_user_email                         = var.yba_admin_user_email
   yba_admin_user_environment                   = var.yba_admin_user_environment
   yba_admin_user_full_name                     = var.yba_admin_user_full_name
@@ -245,7 +245,7 @@ module "yba" {
 
 # GKE hub membership for Anthos config management
 resource "google_gke_hub_membership" "cloud_membership" {
-  depends_on = [module.yba]
+  depends_on    = [module.yba]
   membership_id = "${var.cluster_name}-membership"
   provider      = google-beta
   endpoint {
