@@ -79,16 +79,6 @@ variable "acme_email_address" {
   description = "The email address to use with Cert Manager"
   type        = string
 }
-variable "pnap_private_network_name" {
-  type        = string
-  default     = ""
-  description = "The private network's name to use when creating server in PNAP"
-}
-variable "pnap_public_network_name" {
-  type        = string
-  default     = ""
-  description = "The public network's name to use when creating server in PNAP"
-}
 variable "pnap_load_balancer_ips" {
   type        = string
   description = "The IP pool for PNAP load balancers created"

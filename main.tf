@@ -35,20 +35,18 @@ provider "kubectl" {
 }
 
 module "baremetal_anthos_cluster" {
-  source                    = "github.com/btjimerson/anthos-baremetal-terraform"
-  cluster_name              = format("pnap-%s", var.cluster_name)
-  cloud                     = var.cloud
-  pnap_client_id            = var.pnap_client_id
-  pnap_client_secret        = var.pnap_client_secret
-  pnap_location             = var.pnap_location
-  pnap_worker_type          = var.pnap_worker_type
-  pnap_cp_type              = var.pnap_cp_type
-  pnap_private_network_name = var.pnap_private_network_name
-  pnap_public_network_name  = var.pnap_public_network_name
-  gcp_project_id            = var.gcp_project_id
-  worker_node_count         = var.pnap_worker_node_count
-  ha_control_plane          = var.pnap_ha_control_plane
-  load_balancer_ips         = var.pnap_load_balancer_ips
+  source                   = "github.com/btjimerson/anthos-baremetal-terraform"
+  cluster_name             = format("pnap-%s", var.cluster_name)
+  cloud                    = var.cloud
+  pnap_client_id           = var.pnap_client_id
+  pnap_client_secret       = var.pnap_client_secret
+  pnap_location            = var.pnap_location
+  pnap_worker_type         = var.pnap_worker_type
+  pnap_cp_type             = var.pnap_cp_type
+  gcp_project_id           = var.gcp_project_id
+  worker_node_count        = var.pnap_worker_node_count
+  ha_control_plane         = var.pnap_ha_control_plane
+  load_balancer_ips        = var.pnap_load_balancer_ips
 }
 
 module "gcp_networking" {
@@ -138,7 +136,7 @@ module "cloud_services" {
   yba_version                                  = var.yba_version
 }
 
-/*
+
 // Apply GKE cluster (cluster1) secret
 resource "null_resource" "apply_cluster1_secret" {
   depends_on = [module.on_prem_services, module.cloud_services]
@@ -163,7 +161,6 @@ resource "null_resource" "apply_cluster2_secret" {
     command = "kubectl apply -f - ${module.on_prem_services.cluster2_secret}"
   }
 }
-*/
 
 # Kubeconfig
 module "gke_auth" {
