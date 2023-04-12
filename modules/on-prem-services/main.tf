@@ -30,6 +30,7 @@ resource "null_resource" "create_service_account_token" {
   }
 }
 
+// Set the remote admin token data
 data "external" "remote_admin_token" {
   depends_on = [null_resource.create_service_account_token]
   program = [
@@ -39,54 +40,13 @@ data "external" "remote_admin_token" {
   ]
 }
 
+// Set the remote kubeconfig data
 data "external" "remote_kubeconfig" {
   program = [
     "sh",
     "-c",
     "jq -n --arg content \"$(${local.ssh_command} cat ${local.unix_home}/.kube/config)\" '{$content}'"
   ]
-}
-
-// Create the inlets client deployment
-resource "null_resource" "create_tunnel_client" {
-  connection {
-    type        = "ssh"
-    user        = var.username
-    private_key = var.ssh_key.private_key
-    host        = var.bastion_ip
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "kubectl apply -f - <<EOF",
-      "apiVersion: apps/v1",
-      "kind: Deployment",
-      "metadata:",
-      "  name: ${var.location_name}-inlets-client",
-      "spec:",
-      "  replicas: 1",
-      "  selector:",
-      "    matchLabels:",
-      "      app: ${var.location_name}-inlets-client",
-      "  template:",
-      "    metadata:",
-      "      labels:",
-      "        app: ${var.location_name}-inlets-client",
-      "    spec:",
-      "      containers:",
-      "      - name: ${var.location_name}-inlets-client",
-      "        image: ghcr.io/inlets/inlets-pro:0.9.14",
-      "        imagePullPolicy: IfNotPresent",
-      "        command: [\"inlets-pro\"]",
-      "        args:",
-      "        - \"uplink\"",
-      "        - \"client\"",
-      "        - \"--url=wss://${var.ingress_domain}/tunnels/${var.location_name}\"",
-      "        - \"--token=${var.inlets_token}\"",
-      "        - \"--upstream=6443=kubernetes.default.svc:443\"",
-      "EOF"
-    ]
-  }
 }
 
 // Create the namespace for Yugabyte nodes
