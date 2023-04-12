@@ -75,7 +75,6 @@ module "on_prem_services" {
   bastion_ip               = module.baremetal_anthos_cluster.bastion_host_ip
   username                 = module.baremetal_anthos_cluster.bastion_host_username
   location_name            = var.location_name
-  ingress_domain           = var.inlets_uplink_provider_domain
   yugabyte_nodes_namespace = var.yugabyte_nodes_namespace
   istio_version            = var.istio_version
   ssh_key = {
@@ -98,13 +97,6 @@ module "cloud_services" {
   acm_repo_branch                              = var.cloud_acm_repo_branch
   acm_repo_pat                                 = var.cloud_acm_repo_pat
   acm_repo_username                            = var.cloud_acm_repo_username
-  inlets_uplink_provider_namespace             = var.inlets_uplink_provider_namespace
-  inlets_uplink_tunnels_namespace              = var.inlets_uplink_tunnels_namespace
-  inlets_uplink_license                        = var.inlets_uplink_license
-  inlets_uplink_provider_domain                = var.inlets_uplink_provider_domain
-  inlets_uplink_provider_email_address         = var.acme_email_address
-  inlets_uplink_tunnels_predefined_token       = var.inlets_uplink_tunnels_predefined_token
-  inlets_uplink_tunnels_predefined_token_name  = var.inlets_uplink_tunnels_predefined_token_name
   gke_cluster_id                               = module.gke_cluster.cluster_id
   istio_version                                = var.istio_version
   yba_admin_user_email                         = var.yba_admin_user_email

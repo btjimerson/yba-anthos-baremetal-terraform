@@ -17,10 +17,6 @@ variable "location_name" {
   type        = string
   description = "The name of the edge location"
 }
-variable "ingress_domain" {
-  type        = string
-  description = "The fully qualified domain name of the GKE ingress controller"
-}
 variable "ssh_key" {
   type = object({
     public_key  = string

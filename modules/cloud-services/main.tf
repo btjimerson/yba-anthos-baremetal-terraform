@@ -10,14 +10,8 @@ terraform {
 }
 
 locals {
-  cm_prod_issuer = templatefile("${path.module}/templates/cert-manager/prod_issuer.yaml", {
-    email_address : var.inlets_uplink_provider_email_address,
-    namespace : var.inlets_uplink_provider_namespace
-  })
-  cm_staging_issuer = templatefile("${path.module}/templates/cert-manager/staging-issuer.yaml", {
-    email_address : var.inlets_uplink_provider_email_address,
-    namespace : var.inlets_uplink_provider_namespace
-  })
+  cm_prod_issuer = templatefile("${path.module}/templates/cert-manager/prod_issuer.yaml", {email_address: "bjimerson@gmail.com"})
+  cm_staging_issuer = templatefile("${path.module}/templates/cert-manager/staging-issuer.yaml", {email_address: "bjimerson@gmail.com"})
 }
 
 // Get the kubeconfig

@@ -80,6 +80,7 @@ yba_ui_ip = "35.223.31.53"
 | Name | Version |
 |------|---------|
 | <a name="provider_google"></a> [google](#provider\_google) | n/a |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 
 ## Modules
 
@@ -96,6 +97,8 @@ yba_ui_ip = "35.223.31.53"
 
 | Name | Type |
 |------|------|
+| [null_resource.apply_cluster1_secret](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.apply_cluster2_secret](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [google_client_config.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
 
 ## Inputs
@@ -133,8 +136,6 @@ yba_ui_ip = "35.223.31.53"
 | <a name="input_pnap_ha_control_plane"></a> [pnap\_ha\_control\_plane](#input\_pnap\_ha\_control\_plane) | Do you want a highly available control plane? | `bool` | `true` | no |
 | <a name="input_pnap_load_balancer_ips"></a> [pnap\_load\_balancer\_ips](#input\_pnap\_load\_balancer\_ips) | The IP pool for PNAP load balancers created | `string` | n/a | yes |
 | <a name="input_pnap_location"></a> [pnap\_location](#input\_pnap\_location) | The pnap region to deploy nodes to | `string` | `"PHX"` | no |
-| <a name="input_pnap_private_network_name"></a> [pnap\_private\_network\_name](#input\_pnap\_private\_network\_name) | The private network's name to use when creating server in PNAP | `string` | `""` | no |
-| <a name="input_pnap_public_network_name"></a> [pnap\_public\_network\_name](#input\_pnap\_public\_network\_name) | The public network's name to use when creating server in PNAP | `string` | `""` | no |
 | <a name="input_pnap_worker_node_count"></a> [pnap\_worker\_node\_count](#input\_pnap\_worker\_node\_count) | The number of worker nodes in PNAP | `number` | `1` | no |
 | <a name="input_pnap_worker_type"></a> [pnap\_worker\_type](#input\_pnap\_worker\_type) | The type of PNAP server to deploy for worker nodes | `string` | `"s2.c1.medium"` | no |
 | <a name="input_yba_admin_user_email"></a> [yba\_admin\_user\_email](#input\_yba\_admin\_user\_email) | The email address for the YBA admin user | `string` | n/a | yes |
