@@ -44,6 +44,9 @@ data "http" "yba_operator_deployment_yaml" {
 resource "kubernetes_namespace" "yba_namespace" {
   metadata {
     name = var.yba_namespace
+    labels = {
+      istio-injection = "enabled"
+    }
   }
 }
 
@@ -278,7 +281,7 @@ resource "kubernetes_namespace" "yba_operator_namespace" {
 
 // Config map for YBA operator pull secret
 resource "kubernetes_config_map" "yba_operator_pull_secret_config_map" {
-  //depends_on = [kubernetes_namespace.yba_operator_namespace]
+  depends_on = [kubernetes_namespace.yba_operator_namespace]
   metadata {
     name      = "yugabyte-pull-secret-config-map"
     namespace = var.yba_operator_namespace
@@ -305,7 +308,7 @@ EOT
 
 // Config map for YBA kubeconfig
 resource "kubernetes_config_map" "yba_kubeconfig_config_map" {
-  //depends_on = [kubernetes_namespace.yba_operator_namespace]
+  depends_on = [kubernetes_namespace.yba_operator_namespace]
   metadata {
     name      = "yugabyte-kubeconfig-config"
     namespace = var.yba_operator_namespace

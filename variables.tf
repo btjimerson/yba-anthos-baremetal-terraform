@@ -70,19 +70,6 @@ variable "gcp_router_asn" {
   type        = number
   default     = 16550
 }
-variable "cert_manager_version" {
-  description = "The version of cert manager to install"
-  type        = string
-  default     = "v1.8.0"
-}
-variable "acme_email_address" {
-  description = "The email address to use with Cert Manager"
-  type        = string
-}
-variable "pnap_load_balancer_ips" {
-  type        = string
-  description = "The IP pool for PNAP load balancers created"
-}
 variable "cloud_acm_namespace" {
   description = "The name of the ACM for GKE default namespace"
   type        = string
@@ -248,12 +235,26 @@ variable "yugabyte_nodes_namespace" {
   default     = "yb-nodes"
   description = "The namespace where Yugabyte nodes will be deployed"
 }
-variable "location_name" {
-  type        = string
-  default     = "store-45678"
-  description = "The name of the edge location"
-}
 variable "istio_version" {
   description = "The version of Istio to install"
+  type        = string
+}
+variable "istio_namespace" {
+  description = "The root namespace for Istio"
+  type        = string
+  default     = "istio-system"
+}
+variable "istio_mesh_name" {
+  description = "The name of the Istio mesh"
+  type        = string
+  default     = "mesh1"
+}
+variable "istio_cloud_prefix" {
+  description = "The prefix for Istio objects in GKE"
+  type        = string
+  default     = "cloud"
+}
+variable "istio_on_prem_prefix" {
+  description = "The prefix for Istio objects in on-prem"
   type        = string
 }

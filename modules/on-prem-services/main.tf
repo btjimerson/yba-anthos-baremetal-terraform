@@ -59,12 +59,15 @@ resource "null_resource" "create_yugabyte_nodes_namespace" {
   }
 
   provisioner "remote-exec" {
-    inline = ["kubectl create namespace ${var.yugabyte_nodes_namespace}"]
+    inline = [
+      "kubectl create namespace ${var.yugabyte_nodes_namespace}",
+      "kubectl label namespace ${var.yugabyte_nodes_namespace} istio-injection=enabled"
+    ]
   }
 }
 
-// Install Istio
-resource "null_resource" "install_istio" {
+// Download Istio
+resource "null_resource" "download_istio" {
   connection {
     type        = "ssh"
     user        = var.username
@@ -74,15 +77,30 @@ resource "null_resource" "install_istio" {
 
   provisioner "remote-exec" {
     inline = [
-      "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${var.istio_version} sh -",
-      "istio-${var.istio_version}/bin/istioctl install --set profile=default -y"
+      "curl -L https://istio.io/downloadIstio | ISTIO_VERSION=${var.istio_version} sh -"
+    ]
+  }
+}
+
+// Create Istio root namespace
+resource "null_resource" "create_istio_namespace" {
+  connection {
+    type        = "ssh"
+    user        = var.username
+    private_key = var.ssh_key.private_key
+    host        = var.bastion_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "kubectl create namespace ${var.istio_namespace}"
     ]
   }
 }
 
 // Label istio namespace
 resource "null_resource" "label_istio_namespace" {
-  depends_on = [null_resource.install_istio]
+  depends_on = [null_resource.create_istio_namespace]
   connection {
     type        = "ssh"
     user        = var.username
@@ -92,14 +110,14 @@ resource "null_resource" "label_istio_namespace" {
 
   provisioner "remote-exec" {
     inline = [
-      "kubectl label ns istio-system topology.istio.io/network=network2"
+      "kubectl label namespace istio-system topology.istio.io/network=${var.istio_network_name}"
     ]
   }
 }
 
-// Apply IstioOperator configuration
-resource "null_resource" "apply_istio_cluster_configuration" {
-  depends_on = [null_resource.label_istio_namespace]
+//Create certs secret
+resource "null_resource" "create_istio_certs_secret" {
+  depends_on = [null_resource.create_istio_namespace]
   connection {
     type        = "ssh"
     user        = var.username
@@ -109,17 +127,47 @@ resource "null_resource" "apply_istio_cluster_configuration" {
 
   provisioner "remote-exec" {
     inline = [
-      "cat <<EOF | istio-${var.istio_version}/bin/istioctl install -y -f -",
-      "apiVersion: install.istio.io/v1alpha1",
-      "kind: IstioOperator",
-      "spec:",
-      "  values:",
-      "    global:",
-      "      meshID: mesh1",
-      "      multiCluster:",
-      "        clusterName: cluster2",
-      "      network: network2",
-      "EOF"
+      <<-EOT
+      kubectl create secret generic cacerts -n ${var.istio_namespace} \
+        --from-literal=ca-cert.pem='${var.istio_ca_cert}' \
+        --from-literal=ca-key.pem='${var.istio_ca_key}' \
+        --from-literal=root-cert.pem='${var.istio_root_cert}' \
+        --from-literal=cert-chain.pem='${var.istio_cert_chain}'
+      EOT
+    ]
+  }
+}
+
+// Apply Istio Operator configuration
+resource "null_resource" "apply_istio_cluster_configuration" {
+  depends_on = [null_resource.create_istio_certs_secret]
+  connection {
+    type        = "ssh"
+    user        = var.username
+    private_key = var.ssh_key.private_key
+    host        = var.bastion_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      <<-EOT
+      cat <<EOF | istio-${var.istio_version}/bin/istioctl install -y -f -
+      apiVersion: install.istio.io/v1alpha1
+      kind: IstioOperator
+      spec:
+        meshConfig:
+          defaultConfig:
+            proxyMetadata:
+              ISTIO_META_DNS_CAPTURE: "true"
+              ISTIO_META_DNS_AUTO_ALLOCATE: "true"
+        values:
+          global:
+            meshID: ${var.istio_mesh_name}
+            multiCluster:
+              clusterName: ${var.istio_cluster_name}
+            network: ${var.istio_network_name}
+      EOF
+      EOT
     ]
   }
 }
@@ -136,7 +184,13 @@ resource "null_resource" "apply_east_west_gateway" {
 
   provisioner "remote-exec" {
     inline = [
-      "istio-${var.istio_version}/samples/multicluster/gen-eastwest-gateway.sh --mesh mesh1 --cluster cluster2 --network network2 | istio-${var.istio_version}/bin/istioctl install -y -f -"
+      <<-EOT
+      istio-${var.istio_version}/samples/multicluster/gen-eastwest-gateway.sh \
+        --mesh ${var.istio_mesh_name} \
+        --cluster ${var.istio_cluster_name} \
+        --network ${var.istio_network_name} | \
+        istio-${var.istio_version}/bin/istioctl install -y -f -
+      EOT
     ]
   }
 }
@@ -153,18 +207,20 @@ resource "null_resource" "expose_istio_services" {
 
   provisioner "remote-exec" {
     inline = [
-      "kubectl apply -n istio-system -f istio-${var.istio_version}/samples/multicluster/expose-services.yaml"
+      <<-EOT
+      kubectl apply -n ${var.istio_namespace} -f istio-${var.istio_version}/samples/multicluster/expose-services.yaml
+      EOT
     ]
   }
 }
 
 // Create a secret to connect to the cluster
-data "external" "cluster2_secret" {
+data "external" "cluster_secret" {
   depends_on = [null_resource.apply_east_west_gateway]
   program = [
     "sh",
     "-c",
-    "jq -n --arg content \"$(${local.ssh_command} istio-${var.istio_version}/bin/istioctl x create-remote-secret --name=cluster2)\" '{$content}'"
+    "jq -n --arg content \"$(${local.ssh_command} istio-${var.istio_version}/bin/istioctl x create-remote-secret --name=${var.istio_cluster_name})\" '{$content}'"
   ]
 }
 

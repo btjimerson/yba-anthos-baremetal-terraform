@@ -7,6 +7,14 @@ terraform {
   }
 }
 
+locals {
+  istio_cloud_cluster_name   = "${var.istio_cloud_prefix}-cluster"
+  istio_cloud_network_name   = "${var.istio_cloud_prefix}-network"
+  istio_on_prem_cluster_name = "${var.istio_on_prem_prefix}-cluster"
+  istio_on_prem_network_name = "${var.istio_on_prem_prefix}-network"
+
+}
+
 data "google_client_config" "default" {}
 
 provider "google-beta" {
@@ -34,21 +42,22 @@ provider "kubectl" {
   token                  = data.google_client_config.default.access_token
 }
 
+// Anthos bare metal K8s cluster
 module "baremetal_anthos_cluster" {
-  source                   = "github.com/btjimerson/anthos-baremetal-terraform"
-  cluster_name             = format("pnap-%s", var.cluster_name)
-  cloud                    = var.cloud
-  pnap_client_id           = var.pnap_client_id
-  pnap_client_secret       = var.pnap_client_secret
-  pnap_location            = var.pnap_location
-  pnap_worker_type         = var.pnap_worker_type
-  pnap_cp_type             = var.pnap_cp_type
-  gcp_project_id           = var.gcp_project_id
-  worker_node_count        = var.pnap_worker_node_count
-  ha_control_plane         = var.pnap_ha_control_plane
-  load_balancer_ips        = var.pnap_load_balancer_ips
+  source             = "github.com/btjimerson/anthos-baremetal-terraform"
+  cluster_name       = format("pnap-%s", var.cluster_name)
+  cloud              = var.cloud
+  pnap_client_id     = var.pnap_client_id
+  pnap_client_secret = var.pnap_client_secret
+  pnap_location      = var.pnap_location
+  pnap_worker_type   = var.pnap_worker_type
+  pnap_cp_type       = var.pnap_cp_type
+  gcp_project_id     = var.gcp_project_id
+  worker_node_count  = var.pnap_worker_node_count
+  ha_control_plane   = var.pnap_ha_control_plane
 }
 
+// GKE network
 module "gcp_networking" {
   source         = "./modules/gcp-networking"
   cluster_name   = var.cluster_name
@@ -56,6 +65,7 @@ module "gcp_networking" {
   gcp_region     = var.gcp_region
 }
 
+// GKE cluster
 module "gke_cluster" {
   source              = "./modules/gke-cluster"
   cluster_name        = format("gke-%s", var.cluster_name)
@@ -68,26 +78,52 @@ module "gke_cluster" {
   gcp_subnet_name     = module.gcp_networking.gcp_subnet_name
 }
 
+// Kubeconfig
+module "gke_auth" {
+  source     = "terraform-google-modules/kubernetes-engine/google//modules/auth"
+  depends_on = [module.gke_cluster]
+
+  project_id   = var.gcp_project_id
+  location     = var.gcp_region
+  cluster_name = format("gke-%s", var.cluster_name)
+}
+
+// Istio certs
+module "istio_certs" {
+  source               = "./modules/istio-certs"
+  istio_version        = var.istio_version
+  istio_cloud_prefix   = var.istio_cloud_prefix
+  istio_on_prem_prefix = var.istio_on_prem_prefix
+}
+
+// Configure on-premises cluster
 module "on_prem_services" {
-  depends_on               = [module.baremetal_anthos_cluster]
+  depends_on               = [module.baremetal_anthos_cluster, module.istio_certs]
   source                   = "./modules/on-prem-services"
   ssh_key_path             = module.baremetal_anthos_cluster.ssh_key_path
   bastion_ip               = module.baremetal_anthos_cluster.bastion_host_ip
   username                 = module.baremetal_anthos_cluster.bastion_host_username
-  location_name            = var.location_name
   yugabyte_nodes_namespace = var.yugabyte_nodes_namespace
   istio_version            = var.istio_version
+  istio_namespace          = var.istio_namespace
+  istio_mesh_name          = var.istio_mesh_name
+  istio_network_name       = local.istio_on_prem_network_name
+  istio_cluster_name       = local.istio_on_prem_cluster_name
+  istio_ca_cert            = module.istio_certs.on_prem_cluster_ca_cert
+  istio_ca_key             = module.istio_certs.on_prem_cluster_ca_key
+  istio_cert_chain         = module.istio_certs.on_prem_cluster_cert_chain
+  istio_root_cert          = module.istio_certs.on_prem_cluster_root_cert
   ssh_key = {
     private_key = module.baremetal_anthos_cluster.ssh_key.private_key
     public_key  = module.baremetal_anthos_cluster.ssh_key.public_key
   }
 }
 
+// Configure GKE cluster
 module "cloud_services" {
-  depends_on                                   = [module.gke_cluster, module.on_prem_services, module.gke_auth]
+  depends_on                                   = [module.gke_cluster, module.on_prem_services, module.gke_auth, module.istio_certs]
   source                                       = "./modules/cloud-services"
   cluster_name                                 = format("gke-%s", var.cluster_name)
-  cert_manager_version                         = var.cert_manager_version
   gcp_region                                   = var.gcp_region
   gcp_project_id                               = var.gcp_project_id
   acm_config_sync_source_format                = var.cloud_acm_config_sync_source_format
@@ -99,6 +135,14 @@ module "cloud_services" {
   acm_repo_username                            = var.cloud_acm_repo_username
   gke_cluster_id                               = module.gke_cluster.cluster_id
   istio_version                                = var.istio_version
+  istio_namespace                              = var.istio_namespace
+  istio_mesh_name                              = var.istio_mesh_name
+  istio_network_name                           = local.istio_cloud_network_name
+  istio_cluster_name                           = local.istio_cloud_cluster_name
+  istio_ca_cert                                = module.istio_certs.cloud_cluster_ca_cert
+  istio_ca_key                                 = module.istio_certs.cloud_cluster_ca_key
+  istio_cert_chain                             = module.istio_certs.cloud_cluster_cert_chain
+  istio_root_cert                              = module.istio_certs.cloud_cluster_root_cert
   yba_admin_user_email                         = var.yba_admin_user_email
   yba_admin_user_environment                   = var.yba_admin_user_environment
   yba_admin_user_full_name                     = var.yba_admin_user_full_name
@@ -127,7 +171,6 @@ module "cloud_services" {
   yba_version                                  = var.yba_version
 }
 
-
 // Apply GKE cluster (cluster1) secret
 resource "null_resource" "apply_cluster1_secret" {
   depends_on = [module.on_prem_services, module.cloud_services]
@@ -140,27 +183,29 @@ resource "null_resource" "apply_cluster1_secret" {
 
   provisioner "remote-exec" {
     inline = [
-      "kubectl apply -f - ${module.cloud_services.cluster1_secret}"
+      <<-EOT
+      cat <<EOF | kubectl apply -f - 
+      ${module.cloud_services.cluster_secret}
+      EOF
+      EOT
     ]
   }
 }
 
 // Apply remote cluster (cluster2) secret
 resource "null_resource" "apply_cluster2_secret" {
-  depends_on = [module.on_prem_services, module.cloud_services]
+  depends_on = [
+    module.on_prem_services, 
+    module.cloud_services,
+    module.gke_auth
+  ]
   provisioner "local-exec" {
-    command = "kubectl apply -f - ${module.on_prem_services.cluster2_secret}"
+    command = <<-EOT
+      cat <<EOF | kubectl apply -f - 
+      ${module.on_prem_services.cluster_secret}
+      EOF
+    EOT
   }
-}
-
-# Kubeconfig
-module "gke_auth" {
-  source     = "terraform-google-modules/kubernetes-engine/google//modules/auth"
-  depends_on = [module.gke_cluster]
-
-  project_id   = var.gcp_project_id
-  location     = var.gcp_region
-  cluster_name = format("gke-%s", var.cluster_name)
 }
 
 
