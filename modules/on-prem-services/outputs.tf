@@ -8,7 +8,7 @@ output "remote_kubeconfig" {
   value       = data.external.remote_kubeconfig.result.content
 }
 
-output "cluster2_secret" {
+output "cluster_secret" {
   description = "The remote secret for Istio cluster 2 (on prem)"
-  value       = data.external.cluster2_secret.result.content
+  value       = data.external.cluster_secret.result.content
 }

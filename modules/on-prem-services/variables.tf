@@ -1,4 +1,5 @@
 variable "ssh_key_path" {
+  type        = string
   description = "SSH Public and Private Key"
 }
 variable "bastion_ip" {
@@ -13,10 +14,6 @@ variable "yugabyte_nodes_namespace" {
   type        = string
   description = "The namespace where Yugabyte nodes will be deployed"
 }
-variable "location_name" {
-  type        = string
-  description = "The name of the edge location"
-}
 variable "ssh_key" {
   type = object({
     public_key  = string
@@ -28,3 +25,36 @@ variable "istio_version" {
   description = "The version of Istio to install"
   type        = string
 }
+variable "istio_namespace" {
+  description = "The root namespace for Istio"
+  type        = string
+}
+variable "istio_ca_cert" {
+  description = "The CA cert for Istio"
+  type        = string
+}
+variable "istio_ca_key" {
+  description = "The CA key for Istio"
+  type        = string
+}
+variable "istio_root_cert" {
+  description = "The root cert for Istio"
+  type        = string
+}
+variable "istio_cert_chain" {
+  description = "The cert chain for Istio"
+  type        = string
+}
+variable "istio_mesh_name" {
+  description = "The mesh name for Istio"
+  type        = string
+}
+variable "istio_network_name" {
+  description = "The network name for Istio"
+  type        = string
+}
+variable "istio_cluster_name" {
+  description = "The cluster name for Istio"
+  type        = string
+}
+
