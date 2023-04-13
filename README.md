@@ -91,6 +91,7 @@ yba_ui_ip = "35.223.31.53"
 | <a name="module_gcp_networking"></a> [gcp\_networking](#module\_gcp\_networking) | ./modules/gcp-networking | n/a |
 | <a name="module_gke_auth"></a> [gke\_auth](#module\_gke\_auth) | terraform-google-modules/kubernetes-engine/google//modules/auth | n/a |
 | <a name="module_gke_cluster"></a> [gke\_cluster](#module\_gke\_cluster) | ./modules/gke-cluster | n/a |
+| <a name="module_istio_certs"></a> [istio\_certs](#module\_istio\_certs) | ./modules/istio-certs | n/a |
 | <a name="module_on_prem_services"></a> [on\_prem\_services](#module\_on\_prem\_services) | ./modules/on-prem-services | n/a |
 
 ## Resources
@@ -105,8 +106,6 @@ yba_ui_ip = "35.223.31.53"
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_acme_email_address"></a> [acme\_email\_address](#input\_acme\_email\_address) | The email address to use with Cert Manager | `string` | n/a | yes |
-| <a name="input_cert_manager_version"></a> [cert\_manager\_version](#input\_cert\_manager\_version) | The version of cert manager to install | `string` | `"v1.8.0"` | no |
 | <a name="input_cloud"></a> [cloud](#input\_cloud) | The Cloud to deploy the Baremetal cluster on | `string` | `"PNAP"` | no |
 | <a name="input_cloud_acm_config_sync_source_format"></a> [cloud\_acm\_config\_sync\_source\_format](#input\_cloud\_acm\_config\_sync\_source\_format) | The config sync source format (one of hierarchical \| unstructured) | `string` | `"unstructured"` | no |
 | <a name="input_cloud_acm_git_repo"></a> [cloud\_acm\_git\_repo](#input\_cloud\_acm\_git\_repo) | The git repo URL for ACM for GKE | `string` | n/a | yes |
@@ -122,13 +121,15 @@ yba_ui_ip = "35.223.31.53"
 | <a name="input_gke_machine_type"></a> [gke\_machine\_type](#input\_gke\_machine\_type) | The machine type for GKE nodes | `string` | `"c2-standard-4"` | no |
 | <a name="input_gke_node_count"></a> [gke\_node\_count](#input\_gke\_node\_count) | The number of worker nodes for the GKE cluster | `number` | `1` | no |
 | <a name="input_gke_release_channel"></a> [gke\_release\_channel](#input\_gke\_release\_channel) | The release channel for GKE | `string` | `"RAPID"` | no |
+| <a name="input_istio_cloud_prefix"></a> [istio\_cloud\_prefix](#input\_istio\_cloud\_prefix) | The prefix for Istio objects in GKE | `string` | `"cloud"` | no |
+| <a name="input_istio_mesh_name"></a> [istio\_mesh\_name](#input\_istio\_mesh\_name) | The name of the Istio mesh | `string` | `"mesh1"` | no |
+| <a name="input_istio_namespace"></a> [istio\_namespace](#input\_istio\_namespace) | The root namespace for Istio | `string` | `"istio-system"` | no |
+| <a name="input_istio_on_prem_prefix"></a> [istio\_on\_prem\_prefix](#input\_istio\_on\_prem\_prefix) | The prefix for Istio objects in on-prem | `string` | n/a | yes |
 | <a name="input_istio_version"></a> [istio\_version](#input\_istio\_version) | The version of Istio to install | `string` | n/a | yes |
-| <a name="input_location_name"></a> [location\_name](#input\_location\_name) | The name of the edge location | `string` | `"store-45678"` | no |
 | <a name="input_pnap_client_id"></a> [pnap\_client\_id](#input\_pnap\_client\_id) | The client id for authentication to pnap | `string` | n/a | yes |
 | <a name="input_pnap_client_secret"></a> [pnap\_client\_secret](#input\_pnap\_client\_secret) | The client secret for authentication to pnap | `string` | n/a | yes |
 | <a name="input_pnap_cp_type"></a> [pnap\_cp\_type](#input\_pnap\_cp\_type) | The type of PNAP server to deploy for control plane nodes | `string` | `"s2.c1.medium"` | no |
 | <a name="input_pnap_ha_control_plane"></a> [pnap\_ha\_control\_plane](#input\_pnap\_ha\_control\_plane) | Do you want a highly available control plane? | `bool` | `true` | no |
-| <a name="input_pnap_load_balancer_ips"></a> [pnap\_load\_balancer\_ips](#input\_pnap\_load\_balancer\_ips) | The IP pool for PNAP load balancers created | `string` | n/a | yes |
 | <a name="input_pnap_location"></a> [pnap\_location](#input\_pnap\_location) | The pnap region to deploy nodes to | `string` | `"PHX"` | no |
 | <a name="input_pnap_worker_node_count"></a> [pnap\_worker\_node\_count](#input\_pnap\_worker\_node\_count) | The number of worker nodes in PNAP | `number` | `1` | no |
 | <a name="input_pnap_worker_type"></a> [pnap\_worker\_type](#input\_pnap\_worker\_type) | The type of PNAP server to deploy for worker nodes | `string` | `"s2.c1.medium"` | no |
@@ -163,9 +164,6 @@ yba_ui_ip = "35.223.31.53"
 
 | Name | Description |
 |------|-------------|
-| <a name="output_cluster1_secret"></a> [cluster1\_secret](#output\_cluster1\_secret) | The remote secret for Istio cluster 1 (GKE) |
-| <a name="output_cluster2_secret"></a> [cluster2\_secret](#output\_cluster2\_secret) | The remote secret for Istio cluster 1 (on prem) |
-| <a name="output_nginx_ingress_ip"></a> [nginx\_ingress\_ip](#output\_nginx\_ingress\_ip) | The IP address of the nginx ingress controler |
 | <a name="output_remote_admin_token"></a> [remote\_admin\_token](#output\_remote\_admin\_token) | The token for the remote admin service account |
 | <a name="output_remote_kubeconfig"></a> [remote\_kubeconfig](#output\_remote\_kubeconfig) | The kubeconfig for the remote Kubernetes cluster |
 | <a name="output_ssh_command_for_pnap"></a> [ssh\_command\_for\_pnap](#output\_ssh\_command\_for\_pnap) | Command to run to SSH into the bastion host |
