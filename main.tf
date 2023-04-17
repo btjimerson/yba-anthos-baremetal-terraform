@@ -195,7 +195,7 @@ resource "null_resource" "apply_cluster1_secret" {
 // Apply remote cluster (cluster2) secret
 resource "null_resource" "apply_cluster2_secret" {
   depends_on = [
-    module.on_prem_services, 
+    module.on_prem_services,
     module.cloud_services,
     module.gke_auth
   ]

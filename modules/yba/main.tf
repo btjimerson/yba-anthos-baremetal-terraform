@@ -101,6 +101,10 @@ resource "helm_release" "yba" {
   version    = var.yba_version
   repository = "https://charts.yugabyte.com"
   chart      = "yugaware"
+  set {
+    name  = "istioCompatibility.enabled"
+    value = true
+  }
 }
 
 // Get the IP address for YBA

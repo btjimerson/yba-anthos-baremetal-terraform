@@ -35,7 +35,10 @@ resource "kubernetes_namespace" "istio_namespace" {
 
 //Install certs secret
 resource "null_resource" "istio_certs_secret" {
-  depends_on = [kubernetes_namespace.istio_namespace]
+  depends_on = [
+    null_resource.set_gke_creds,
+    kubernetes_namespace.istio_namespace
+  ]
   provisioner "local-exec" {
     command = <<-EOT
       kubectl create secret generic cacerts -n ${var.istio_namespace} \
@@ -134,6 +137,7 @@ resource "null_resource" "remove_istio" {
 
 // Install and configure YBA
 module "yba" {
+  depends_on = [null_resource.apply_istio_cluster_configuration]
   source                                       = "../yba"
   yba_admin_user_email                         = var.yba_admin_user_email
   yba_admin_user_environment                   = var.yba_admin_user_environment
