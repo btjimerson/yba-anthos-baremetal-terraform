@@ -1,5 +1,5 @@
 # Google Anthos on PhoenixNAP with GKE on Google Cloud, YugabyteDB Anywhere, interconnected by Inlets Uplink
-This [Terraform](http://terraform.io) module will allow you to deploy [Google Cloud's Anthos on Baremetal](https://cloud.google.com/anthos) on [PhoenixNAP](http://phoenixnap.com), a [GKE cluster](https://cloud.google.com/kubernetes-engine) on [Google Cloud](https://cloud.google.com), and interconnected by [Inlets Uplink](https://inlets.dev). This module then deploys [YugabyteDB Anywhere](https://www.yugabyte.com) on the GKE cluster, as well as an Anthos Configuration Management package to allow you to create a YugabyteDB Universe in the remote cluster.
+This [Terraform](http://terraform.io) module will allow you to deploy [Google Cloud's Anthos on Baremetal](https://cloud.google.com/anthos) on [PhoenixNAP](http://phoenixnap.com), a [GKE cluster](https://cloud.google.com/kubernetes-engine) on [Google Cloud](https://cloud.google.com), and interconnected by [Istio](https://istio.io). This module then deploys [YugabyteDB Anywhere](https://www.yugabyte.com) on the GKE cluster, as well as an Anthos Configuration Management package to allow you to create a YugabyteDB Universe in the remote cluster.
 ![GKE + YBA](./docs/images/GDC_YBA.png)
 ## Prerequisites 
 ### Software to Install
@@ -25,9 +25,6 @@ This [Terraform](http://terraform.io) module will allow you to deploy [Google Cl
 #### Google Cloud
 * Project ID
 * Region
-#### Other
-* E-Mail Address
-* Domain Name(FQDN)
 
 ## Deployment
 ### Authenticate to Google Cloud
