@@ -36,3 +36,6 @@ terraform.tfvars
 
 # Certs
 istio-certs/certs*
+
+# Mac OS files
+.DS_Store
