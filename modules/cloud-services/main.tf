@@ -137,7 +137,10 @@ resource "null_resource" "remove_istio" {
 
 // Install and configure YBA
 module "yba" {
-  depends_on = [null_resource.apply_istio_cluster_configuration]
+  depends_on = [
+    null_resource.apply_istio_cluster_configuration,
+    data.external.cluster_secret
+  ]
   source                                       = "../yba"
   yba_admin_user_email                         = var.yba_admin_user_email
   yba_admin_user_environment                   = var.yba_admin_user_environment
@@ -202,7 +205,7 @@ resource "google_gke_hub_feature_membership" "cloud_feature_member" {
 # before we put the github credentials in there
 resource "time_sleep" "cloud_wait_for_namespace" {
   depends_on      = [google_gke_hub_feature_membership.cloud_feature_member]
-  create_duration = "60s"
+  create_duration = "120s"
 }
 
 # Credentials for Github sync
