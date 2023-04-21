@@ -159,6 +159,7 @@ module "cloud_services" {
   yba_operator_service_account_manifest        = var.yba_operator_service_account_manifest
   yba_operator_github_repo                     = var.yba_operator_github_repo
   yba_operator_namespace                       = var.yba_operator_namespace
+  yba_operator_software_crd_manifest           = var.yba_operator_software_crd_manifest
   yba_operator_universe_crd_manifest           = var.yba_operator_universe_crd_manifest
   yba_pull_secret                              = var.yba_pull_secret
   yba_role                                     = var.yba_role

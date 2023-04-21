@@ -27,6 +27,9 @@ data "http" "yba_operator_cloud_provider_crd_yaml" {
 data "http" "yba_operator_universe_crd_yaml" {
   url = "${var.yba_operator_github_repo}/${var.yba_operator_universe_crd_manifest}"
 }
+data "http" "yba_operator_software_crd_yaml" {
+  url = "${var.yba_operator_github_repo}/${var.yba_operator_software_crd_manifest}"
+}
 data "http" "yba_operator_service_account_yaml" {
   url = "${var.yba_operator_github_repo}/${var.yba_operator_service_account_manifest}"
 }
@@ -274,6 +277,11 @@ resource "kubectl_manifest" "yba_operator_cloud_provider_crd" {
 // Install the universe crd
 resource "kubectl_manifest" "yba_operator_universe_crd" {
   yaml_body = data.http.yba_operator_universe_crd_yaml.response_body
+}
+
+// Install the software crd
+resource "kubectl_manifest" "yba_operator_software_crd" {
+  yaml_body = data.http.yba_operator_software_crd_yaml.response_body
 }
 
 // Namespace for YBA operator

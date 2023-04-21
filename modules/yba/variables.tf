@@ -82,6 +82,10 @@ variable "yba_operator_universe_crd_manifest" {
   description = "The name of the universe crd"
   type        = string
 }
+variable "yba_operator_software_crd_manifest" {
+  description = "The name of the software crd"
+  type        = string
+}
 variable "yba_admin_user_kubernetes_name" {
   description = "The Kubernetes name for the YBA admin user"
   type        = string
