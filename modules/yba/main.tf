@@ -381,20 +381,4 @@ resource "time_sleep" "wait_for_yba_operator" {
   create_duration = "20s"
 }
 
-// Create the YBA admin user
-resource "kubectl_manifest" "yba_admin_user" {
-  depends_on = [time_sleep.wait_for_yba_operator]
-  yaml_body  = <<EOT
-apiVersion: ybaoperator.io/v1alpha1
-kind: AdminUser
-metadata:
-  name: ${var.yba_admin_user_kubernetes_name}
-  namespace: ${var.yba_operator_namespace}
-spec:
-  fullName: "${var.yba_admin_user_full_name}"
-  password: "${var.yba_admin_user_password}"
-  email: "${var.yba_admin_user_email}"
-  environment: "${var.yba_admin_user_environment}"
-EOT
-}
 

@@ -143,11 +143,6 @@ module "cloud_services" {
   istio_ca_key                                 = module.istio_certs.cloud_cluster_ca_key
   istio_cert_chain                             = module.istio_certs.cloud_cluster_cert_chain
   istio_root_cert                              = module.istio_certs.cloud_cluster_root_cert
-  yba_admin_user_email                         = var.yba_admin_user_email
-  yba_admin_user_environment                   = var.yba_admin_user_environment
-  yba_admin_user_full_name                     = var.yba_admin_user_full_name
-  yba_admin_user_kubernetes_name               = var.yba_admin_user_kubernetes_name
-  yba_admin_user_password                      = var.yba_admin_user_password
   yba_kubeconfig                               = module.gke_auth.kubeconfig_raw
   yba_kubeconfig_config_map                    = var.yba_kubeconfig_config_map
   yba_namespace                                = var.yba_namespace

@@ -175,23 +175,3 @@ variable "yba_operator_software_crd_manifest" {
   description = "The name of the software crd"
   type        = string
 }
-variable "yba_admin_user_kubernetes_name" {
-  description = "The Kubernetes name for the YBA admin user"
-  type        = string
-}
-variable "yba_admin_user_full_name" {
-  description = "The full name for the YBA admin user"
-  type        = string
-}
-variable "yba_admin_user_password" {
-  description = "The password for the YBA admin user"
-  type        = string
-}
-variable "yba_admin_user_email" {
-  description = "The email address for the YBA admin user"
-  type        = string
-}
-variable "yba_admin_user_environment" {
-  description = "The environment for the YBA admin user"
-  type        = string
-}

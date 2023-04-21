@@ -142,11 +142,6 @@ module "yba" {
     data.external.cluster_secret
   ]
   source                                       = "../yba"
-  yba_admin_user_email                         = var.yba_admin_user_email
-  yba_admin_user_environment                   = var.yba_admin_user_environment
-  yba_admin_user_full_name                     = var.yba_admin_user_full_name
-  yba_admin_user_kubernetes_name               = var.yba_admin_user_kubernetes_name
-  yba_admin_user_password                      = var.yba_admin_user_password
   yba_kubeconfig                               = var.yba_kubeconfig
   yba_kubeconfig_config_map                    = var.yba_kubeconfig_config_map
   yba_namespace                                = var.yba_namespace
