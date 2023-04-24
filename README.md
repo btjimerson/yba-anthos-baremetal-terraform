@@ -157,8 +157,8 @@ yba_ui_ip = "35.223.31.53"
 
 | Name | Description |
 |------|-------------|
+| <a name="output_open_yba_ui"></a> [open\_yba\_ui](#output\_open\_yba\_ui) | The YBA UI |
 | <a name="output_remote_admin_token"></a> [remote\_admin\_token](#output\_remote\_admin\_token) | The token for the remote admin service account |
 | <a name="output_remote_kubeconfig"></a> [remote\_kubeconfig](#output\_remote\_kubeconfig) | The kubeconfig for the remote Kubernetes cluster |
 | <a name="output_ssh_command_for_pnap"></a> [ssh\_command\_for\_pnap](#output\_ssh\_command\_for\_pnap) | Command to run to SSH into the bastion host |
-| <a name="output_yba_ui_ip"></a> [yba\_ui\_ip](#output\_yba\_ui\_ip) | The IP address of the YBA UI |
 <!-- END_TF_DOCS -->
