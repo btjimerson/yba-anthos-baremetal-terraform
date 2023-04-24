@@ -14,7 +14,7 @@ output "remote_kubeconfig" {
   sensitive   = true
 }
 
-output "yba_ui_ip" {
-  value       = module.cloud_services.yba_ui_ip
-  description = "The IP address of the YBA UI"
+output "open_yba_ui" {
+  value       = module.cloud_services.open_yba_ui
+  description = "The YBA UI"
 }
