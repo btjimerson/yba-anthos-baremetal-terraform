@@ -14,7 +14,12 @@ output "remote_kubeconfig" {
   sensitive   = true
 }
 
-output "open_yba_ui" {
-  value       = module.cloud_services.open_yba_ui
-  description = "The YBA UI"
+output "yba_ui_ip" {
+  value       = module.cloud_services.yba_ui_ip
+  description = "The IP address of the YBA UI"
+}
+
+output "remote_ingress_ip" {
+  description = "The IP address of the ingress gateway for the remote cluster"
+  value       = module.on_prem_services.remote_ingress_ip
 }

@@ -3,7 +3,7 @@ output "cluster_secret" {
   value       = data.external.cluster_secret.result.content
 }
 
-output "open_yba_ui" {
-  value       = module.yba.open_yba_ui
-  description = "The YBA UI"
+output "yba_ui_ip" {
+  value       = module.yba.yba_ui_ip
+  description = "The IP address of the YBA UI"
 }

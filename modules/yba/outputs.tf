@@ -1,4 +1,4 @@
-output "open_yba_ui" {
-  value       = "open http://${data.external.yba_ui_ip.result.content}/"
+output "yba_ui_ip" {
+  value       = data.external.yba_ui_ip.result.content
   description = "The IP address of the YBA UI"
 }

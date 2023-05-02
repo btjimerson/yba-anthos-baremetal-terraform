@@ -214,6 +214,16 @@ resource "null_resource" "expose_istio_services" {
   }
 }
 
+// Get the ingress gateway IP address
+data "external" "remote_ingress_ip" {
+  depends_on = [null_resource.expose_istio_services]
+  program = [
+    "sh",
+    "-c",
+    "jq -n --arg content \"$(${local.ssh_command} kubectl get svc -n istio-system istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')\" '{$content}'"
+  ]
+}
+
 // Create a secret to connect to the cluster
 data "external" "cluster_secret" {
   depends_on = [null_resource.apply_east_west_gateway]

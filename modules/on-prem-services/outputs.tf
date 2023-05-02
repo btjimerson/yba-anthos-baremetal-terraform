@@ -12,3 +12,8 @@ output "cluster_secret" {
   description = "The remote secret for Istio cluster 2 (on prem)"
   value       = data.external.cluster_secret.result.content
 }
+
+output "remote_ingress_ip" {
+  description = "The IP address of the ingress gateway"
+  value       = data.external.remote_ingress_ip.result.content
+}
