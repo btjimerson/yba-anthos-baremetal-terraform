@@ -294,19 +294,12 @@ resource "kubernetes_config_map" "yba_operator_pull_secret_config_map" {
   data = {
     "yugabyte-pull-secret.yaml" = <<EOT
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: yugabyte-pull-secret-config-map
-  namespace: ${var.yba_operator_namespace}
+  name: yugabyte-k8s-pull-secret
 data:
-  yugabyte-pull-secret.yaml: |
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: yugabyte-k8s-pull-secret
-    data:
-      .dockerconfigjson: ${base64encode(var.yba_pull_secret)}
-    type: kubernetes.io/dockerconfigjson
+  .dockerconfigjson: ${base64encode(var.yba_pull_secret)}
+type: kubernetes.io/dockerconfigjson
 EOT
   }
 }
