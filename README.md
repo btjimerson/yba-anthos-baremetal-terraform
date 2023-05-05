@@ -109,6 +109,7 @@ yba_ui_ip = "35.223.31.53"
 | <a name="input_cloud_acm_namespace"></a> [cloud\_acm\_namespace](#input\_cloud\_acm\_namespace) | The name of the ACM for GKE default namespace | `string` | `"config-management-system"` | no |
 | <a name="input_cloud_acm_repo_authentication"></a> [cloud\_acm\_repo\_authentication](#input\_cloud\_acm\_repo\_authentication) | The secret type for the ACM for GKE repo | `string` | `"none"` | no |
 | <a name="input_cloud_acm_repo_branch"></a> [cloud\_acm\_repo\_branch](#input\_cloud\_acm\_repo\_branch) | The repo branch to sync for ACM for GKE | `string` | `"main"` | no |
+| <a name="input_cloud_acm_repo_dir"></a> [cloud\_acm\_repo\_dir](#input\_cloud\_acm\_repo\_dir) | The directory in the repo containing configurations. Defaults to the root. | `string` | `""` | no |
 | <a name="input_cloud_acm_repo_pat"></a> [cloud\_acm\_repo\_pat](#input\_cloud\_acm\_repo\_pat) | The personal access token for authentication to Git (only required if authentication is token) | `string` | `""` | no |
 | <a name="input_cloud_acm_repo_username"></a> [cloud\_acm\_repo\_username](#input\_cloud\_acm\_repo\_username) | The username to use for authentication to Git (only required if authentication is token) | `string` | `""` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name(s) of the clusters to be deployed | `string` | `"my-cluster"` | no |
