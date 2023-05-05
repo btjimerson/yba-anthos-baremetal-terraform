@@ -1,9 +1,8 @@
-# Google Anthos on PhoenixNAP with GKE on Google Cloud, YugabyteDB Anywhere, interconnected by Inlets Uplink
+# Google Anthos on PhoenixNAP with GKE on Google Cloud, YugabyteDB Anywhere, with Istio multi-cluster between the clusters
 This [Terraform](http://terraform.io) module will allow you to deploy [Google Cloud's Anthos on Baremetal](https://cloud.google.com/anthos) on [PhoenixNAP](http://phoenixnap.com), a [GKE cluster](https://cloud.google.com/kubernetes-engine) on [Google Cloud](https://cloud.google.com), and interconnected by [Istio](https://istio.io). This module then deploys [YugabyteDB Anywhere](https://www.yugabyte.com) on the GKE cluster, as well as an Anthos Configuration Management package to allow you to create a YugabyteDB Universe in the remote cluster.
 ![GKE + YBA](./docs/images/GDC_YBA.png)
 ## Prerequisites 
 ### Software to Install
-`Only Linux and Mac has been tested`
 * [gcloud command line](https://cloud.google.com/sdk/docs/install)
 * [terraform](https://www.terraform.io/downloads)
 * [helm](https://helm.sh/docs/intro/install/)
@@ -13,9 +12,6 @@ This [Terraform](http://terraform.io) module will allow you to deploy [Google Cl
 ### Accounts Needed
 * [PhoenixNAP](https://phoenixnap.com/bare-metal-cloud)
 * [Google Cloud Account](https://console.cloud.google.com/)
-* [Inlets Uplink](https://inlets.dev)
-### Other
-* A domain name or subdomain you control DNS for
 ### Information to Gather
 #### PhoenixNAP
 * Client ID
@@ -37,34 +33,55 @@ gcloud auth application-default login # Follown any prompts
 git clone https://github.com/btjimerson/yba-anthos-baremetal-terraform
 cd yba-anthos-baremetal-terraform
 ```
-### Create your terraform variables file
+### Create your Terraform variables file
 The easiest way to set the required variables is to use `terraform-docs`
 ```bash
 terraform-docs tfvars hcl .
 ```
 Any variables that are blank will need to be set in a `*.auto.tfvars` or `terraform.tfvars` file. Optionally, you can override variables that have a default value.
+
+Alternatively, you can use the [Inputs](#inputs) section below to create your variables file.
 ### Initialize Terraform
 ```bash
 terraform init
 ```
-### Deploy the stack
+### Apply the configuration
 ```bash
 terraform apply 
 ```
-### What success looks like
-```
-Apply complete! Resources: 3 added, 1 changed, 0 destroyed.
+### Outputs from the configuration
+When you complete you should see an ouput like this:
+```bash
+Apply complete! Resources: 104 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-nginx_ingress_ip = "34.68.2.89"
-pnap_bastion_host_ip = "131.153.240.245"
-pnap_bastion_host_username = "ubuntu"
-ssh_command_for_pnap = "ssh -i /Users/bjimerson/.ssh/anthos-pnap-yba-abm-sark7 ubuntu@131.153.240.245"
-ssh_key_path = "/Users/bjimerson/.ssh/anthos-pnap-yba-abm-sark7"
-website = "https://yba.pintobean.xyz"
-yba_ui_ip = "35.223.31.53"
+remote_admin_token = "<redacted>"
+remote_ingress_ip = "131.153.225.105"
+remote_kubeconfig = <sensitive>
+ssh_command_for_pnap = "ssh -o StrictHostKeyChecking=no -i /Users/bjimerson/.ssh/anthos-pnap-yba-abm-h48ak ubuntu@131.153.225.98"
+yba_ui_ip = "34.27.56.44"
 ```
+There are a few of the outputs that you'll need to finish setting up the environment:
+#### `remote_admin_token`
+Use this token to log into the remote Anthos Kubernetes cluster in the GKE console. You will need to do this to manage the remote cluster as part of the GKE fleet.
+
+#### `remote_ingress_ip`
+This is the IP address for the `IngressGateway` of the remote cluster. If you deploy an application to the remote cluster that needs to be available outside of the cluster, you can create an Istio `Gateway` for the application, and create a DNS record that points to this IP address. For an example of configuring a `Gateway` for your application, see this [file](https://github.com/btjimerson/ecommerce-demo/blob/main/deploy/frontend-gateway.yaml).
+
+#### `remote_kubeconfig`
+Use this value in the custom `CloudProvider` Kubernetes object's `spec.kubeconfig` value. This kubeconfig allows YBA in the GKE cluster to connect and provision resources in the remote cluster. Note that this value is considered a secret; in order to get the value you need to run a command like this:
+```bash
+terraform output remote_kubeconfig
+```
+Terraform outputs are always considered strings and are output surrounded with quotes for single-line values, and `<<EOT / EOT` for multiline values. Make sure you remove the `<<EOT/ EOT` from the output file before using it in the `CloudProvider` yaml.
+
+#### `ssh_command_for_pnap`
+This is the command to establish an SSH connection with the jumpbox host in PNAP, complete with the certificate. You will need to be on the jumpbox to execute any `kubectl` commands on the remote cluster.
+
+#### `yba_ui_ip`
+The is the `LoadBalancer` IP address for the YBA UI. Use it to access YBA.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -109,7 +126,6 @@ yba_ui_ip = "35.223.31.53"
 | <a name="input_cloud_acm_namespace"></a> [cloud\_acm\_namespace](#input\_cloud\_acm\_namespace) | The name of the ACM for GKE default namespace | `string` | `"config-management-system"` | no |
 | <a name="input_cloud_acm_repo_authentication"></a> [cloud\_acm\_repo\_authentication](#input\_cloud\_acm\_repo\_authentication) | The secret type for the ACM for GKE repo | `string` | `"none"` | no |
 | <a name="input_cloud_acm_repo_branch"></a> [cloud\_acm\_repo\_branch](#input\_cloud\_acm\_repo\_branch) | The repo branch to sync for ACM for GKE | `string` | `"main"` | no |
-| <a name="input_cloud_acm_repo_dir"></a> [cloud\_acm\_repo\_dir](#input\_cloud\_acm\_repo\_dir) | The directory in the repo containing configurations. Defaults to the root. | `string` | `""` | no |
 | <a name="input_cloud_acm_repo_pat"></a> [cloud\_acm\_repo\_pat](#input\_cloud\_acm\_repo\_pat) | The personal access token for authentication to Git (only required if authentication is token) | `string` | `""` | no |
 | <a name="input_cloud_acm_repo_username"></a> [cloud\_acm\_repo\_username](#input\_cloud\_acm\_repo\_username) | The username to use for authentication to Git (only required if authentication is token) | `string` | `""` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | The name(s) of the clusters to be deployed | `string` | `"my-cluster"` | no |
