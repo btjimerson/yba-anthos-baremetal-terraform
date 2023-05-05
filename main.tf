@@ -104,6 +104,9 @@ module "on_prem_services" {
   bastion_ip               = module.baremetal_anthos_cluster.bastion_host_ip
   username                 = module.baremetal_anthos_cluster.bastion_host_username
   yugabyte_nodes_namespace = var.yugabyte_nodes_namespace
+  acm_namespace            = var.on_prem_acm_namespace
+  acm_repo_pat             = var.on_prem_acm_repo_pat
+  acm_repo_username        = var.on_prem_acm_repo_username
   istio_version            = var.istio_version
   istio_namespace          = var.istio_namespace
   istio_mesh_name          = var.istio_mesh_name

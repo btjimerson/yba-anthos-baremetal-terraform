@@ -166,9 +166,33 @@ module "yba" {
   yba_version                                  = var.yba_version
 }
 
+// Create ACM namespace
+resource "kubernetes_namespace" "acm_namespace" {
+  metadata {
+    name = var.acm_namespace
+  }
+}
+
+# Credentials for Github sync
+resource "kubernetes_secret" "git_creds" {
+  depends_on = [kubernetes_namespace.acm_namespace]
+  metadata {
+    name      = "git-creds"
+    namespace = var.acm_namespace
+  }
+
+  data = {
+    username = var.acm_repo_username
+    token    = var.acm_repo_pat
+  }
+}
+
 # GKE hub membership for Anthos config management
 resource "google_gke_hub_membership" "cloud_membership" {
-  depends_on    = [module.yba]
+  depends_on    = [
+    module.yba,
+    kubernetes_secret.git_creds
+  ]
   membership_id = "${var.cluster_name}-membership"
   provider      = google-beta
   endpoint {
@@ -197,24 +221,6 @@ resource "google_gke_hub_feature_membership" "cloud_feature_member" {
   }
 }
 
-# Wait for a little bit to let ACM create its namespace
-# before we put the github credentials in there
-resource "time_sleep" "cloud_wait_for_namespace" {
-  depends_on      = [google_gke_hub_feature_membership.cloud_feature_member]
-  create_duration = "120s"
-}
 
-# Credentials for Github sync
-resource "kubernetes_secret" "git_creds" {
-  depends_on = [time_sleep.cloud_wait_for_namespace]
-  metadata {
-    name      = "git-creds"
-    namespace = var.acm_namespace
-  }
 
-  data = {
-    username = var.acm_repo_username
-    token    = var.acm_repo_pat
-  }
-}
 

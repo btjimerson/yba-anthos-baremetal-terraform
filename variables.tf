@@ -70,6 +70,22 @@ variable "gcp_router_asn" {
   type        = number
   default     = 16550
 }
+variable "on_prem_acm_namespace" {
+  description = "The name of the ACM for on prem default namespace"
+  type        = string
+  default     = "config-management-system"
+}
+variable "on_prem_acm_repo_username" {
+  description = "The username to use for authentication to Git (only required if authentication is token)"
+  type        = string
+  default     = ""
+}
+variable "on_prem_acm_repo_pat" {
+  description = "The personal access token for authentication to Git (only required if authentication is token)"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
 variable "cloud_acm_namespace" {
   description = "The name of the ACM for GKE default namespace"
   type        = string

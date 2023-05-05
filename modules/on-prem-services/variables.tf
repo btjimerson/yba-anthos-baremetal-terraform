@@ -14,6 +14,19 @@ variable "yugabyte_nodes_namespace" {
   type        = string
   description = "The namespace where Yugabyte nodes will be deployed"
 }
+variable "acm_namespace" {
+  description = "The name of the ACM default namespace"
+  type        = string
+}
+variable "acm_repo_username" {
+  description = "The username to use for authentication to Git (only required if authentication is token)"
+  type        = string
+}
+variable "acm_repo_pat" {
+  description = "The personal access token for authentication to Git (only required if authentication is token)"
+  type        = string
+  sensitive   = true
+}
 variable "ssh_key" {
   type = object({
     public_key  = string

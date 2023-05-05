@@ -3,6 +3,39 @@ locals {
   unix_home   = var.username == "root" ? "/root" : "/home/${var.username}"
 }
 
+// Create namespace for ACM
+resource "null_resource" "create_acm_namespace" {
+  connection {
+    type        = "ssh"
+    user        = var.username
+    private_key = var.ssh_key.private_key
+    host        = var.bastion_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "kubectl create namespace ${var.acm_namespace}"
+    ]
+  }
+}
+
+// Create namespace for ACM credentials secret
+resource "null_resource" "create_acm_credentials_secret" {
+  depends_on = [null_resource.create_acm_namespace]
+  connection {
+    type        = "ssh"
+    user        = var.username
+    private_key = var.ssh_key.private_key
+    host        = var.bastion_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "kubectl create secret generic git-creds -n ${var.acm_namespace} --from-literal=username=${var.acm_repo_username} --from-literal=token=${var.acm_repo_pat}"
+    ]
+  }
+}
+
 // Create a service account token for remotely administering in GKE
 resource "null_resource" "create_service_account_token" {
   connection {
