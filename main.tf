@@ -134,6 +134,7 @@ module "cloud_services" {
   acm_namespace                                = var.cloud_acm_namespace
   acm_repo_authentication                      = var.cloud_acm_repo_authentication
   acm_repo_branch                              = var.cloud_acm_repo_branch
+  acm_repo_dir                                 = var.cloud_acm_repo_dir
   acm_repo_pat                                 = var.cloud_acm_repo_pat
   acm_repo_username                            = var.cloud_acm_repo_username
   gke_cluster_id                               = module.gke_cluster.cluster_id

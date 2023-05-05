@@ -189,7 +189,7 @@ resource "kubernetes_secret" "git_creds" {
 
 # GKE hub membership for Anthos config management
 resource "google_gke_hub_membership" "cloud_membership" {
-  depends_on    = [
+  depends_on = [
     module.yba,
     kubernetes_secret.git_creds
   ]
@@ -213,6 +213,7 @@ resource "google_gke_hub_feature_membership" "cloud_feature_member" {
     config_sync {
       source_format = var.acm_config_sync_source_format
       git {
+        policy_dir  = var.acm_repo_dir
         sync_repo   = var.acm_git_repo
         sync_branch = var.acm_repo_branch
         secret_type = var.acm_repo_authentication

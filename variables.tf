@@ -100,6 +100,11 @@ variable "cloud_acm_repo_branch" {
   type        = string
   default     = "main"
 }
+variable "cloud_acm_repo_dir" {
+  description = "The directory in the repo containing configurations. Defaults to the root."
+  type = string
+  default = ""
+}
 variable "cloud_acm_repo_authentication" {
   description = "The secret type for the ACM for GKE repo"
   type        = string

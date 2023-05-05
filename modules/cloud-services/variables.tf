@@ -39,6 +39,11 @@ variable "acm_repo_pat" {
   type        = string
   sensitive   = true
 }
+variable "acm_repo_dir" {
+  description = "The directory in the repository containing the configuration. Defaults to the root."
+  type        = string
+  default     = ""
+}
 variable "acm_config_sync_source_format" {
   description = "The config sync source format (one of hierarchical | unstructured)"
   type        = string
