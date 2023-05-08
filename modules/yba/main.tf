@@ -335,7 +335,7 @@ resource "kubectl_manifest" "yba_operator_cluster_role" {
     kubectl_manifest.yba_operator_admin_user_crd,
     kubectl_manifest.yba_operator_cloud_provider_crd,
     kubectl_manifest.yba_operator_universe_crd,
-    kubectl_manifest.data.http.yba_operator_software_crd_yaml,
+    kubectl_manifest.yba_operator_software_crd,
     kubernetes_config_map.yba_operator_pull_secret_config_map
   ]
   yaml_body = data.http.yba_operator_cluster_role_yaml.response_body
