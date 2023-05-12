@@ -6,41 +6,7 @@ terraform {
     helm = {
       source = "hashicorp/helm"
     }
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = "~>1.14.0"
-    }
-    http = {
-      source  = "hashicorp/http"
-      version = "~>3.2.1"
-    }
   }
-}
-
-// Fetch the remote manifests
-data "http" "yba_operator_admin_user_crd_yaml" {
-  url = "${var.yba_operator_github_repo}/${var.yba_operator_admin_crd_manifest}"
-}
-data "http" "yba_operator_cloud_provider_crd_yaml" {
-  url = "${var.yba_operator_github_repo}/${var.yba_operator_cloud_provider_crd_manifest}"
-}
-data "http" "yba_operator_universe_crd_yaml" {
-  url = "${var.yba_operator_github_repo}/${var.yba_operator_universe_crd_manifest}"
-}
-data "http" "yba_operator_software_crd_yaml" {
-  url = "${var.yba_operator_github_repo}/${var.yba_operator_software_crd_manifest}"
-}
-data "http" "yba_operator_service_account_yaml" {
-  url = "${var.yba_operator_github_repo}/${var.yba_operator_service_account_manifest}"
-}
-data "http" "yba_operator_cluster_role_yaml" {
-  url = "${var.yba_operator_github_repo}/${var.yba_operator_cluster_role_manifest}"
-}
-data "http" "yba_operator_cluster_role_binding_yaml" {
-  url = "${var.yba_operator_github_repo}/${var.yba_operator_cluster_role_binding_manifest}"
-}
-data "http" "yba_operator_deployment_yaml" {
-  url = "${var.yba_operator_github_repo}/${var.yba_operator_deployment_manifest}"
 }
 
 // Namespace for YBA
@@ -80,7 +46,7 @@ kind: Secret
 metadata:
   name: yugabyte-k8s-pull-secret
 data:
-  .dockerconfigjson: ${base64encode(var.yba_pull_secret)}
+  .dockerconfigjson: $+base64encode(var.yba_pull_secret)}
 type: kubernetes.io/dockerconfigjson
 EOT
   }
@@ -257,106 +223,27 @@ resource "kubernetes_secret" "universe_management_sa_token" {
   type = "kubernetes.io/service-account-token"
 }
 
-// Install the admin user crd
-resource "kubectl_manifest" "yba_operator_admin_user_crd" {
-  yaml_body = data.http.yba_operator_admin_user_crd_yaml.response_body
-}
-
-// Install the cloud provider crd
-resource "kubectl_manifest" "yba_operator_cloud_provider_crd" {
-  yaml_body = data.http.yba_operator_cloud_provider_crd_yaml.response_body
-}
-
-// Install the universe crd
-resource "kubectl_manifest" "yba_operator_universe_crd" {
-  yaml_body = data.http.yba_operator_universe_crd_yaml.response_body
-}
-
-// Install the software crd
-resource "kubectl_manifest" "yba_operator_software_crd" {
-  yaml_body = data.http.yba_operator_software_crd_yaml.response_body
-}
-
-// Namespace for YBA operator
-resource "kubernetes_namespace" "yba_operator_namespace" {
-  metadata {
-    name = var.yba_operator_namespace
+// Install the YBA Kubernetes Operator helm chart
+resource "helm_release" "yba_kubernetes_operator" {
+  name       = "yba-operator"
+  repository = "https://btjimerson.github.io/btjimerson-charts"
+  chart      = "yba-kubernetes-operator"
+  set {
+    name  = "global.createNamespace"
+    value = true
   }
-}
-
-// Config map for YBA operator pull secret
-resource "kubernetes_config_map" "yba_operator_pull_secret_config_map" {
-  depends_on = [kubernetes_namespace.yba_operator_namespace]
-  metadata {
-    name      = "yugabyte-pull-secret-config-map"
-    namespace = var.yba_operator_namespace
+  set {
+    name  = "namespace.name"
+    value = var.yba_operator_namespace
   }
-  data = {
-    "yugabyte-pull-secret.yaml" = <<EOT
-apiVersion: v1
-kind: Secret
-metadata:
-  name: yugabyte-k8s-pull-secret
-data:
-  .dockerconfigjson: ${base64encode(var.yba_pull_secret)}
-type: kubernetes.io/dockerconfigjson
-EOT
+  set {
+    name  = "pullSecretConfigMap.pullSecret"
+    value = base64encode(var.yba_pull_secret)
   }
-}
-
-// Config map for YBA kubeconfig
-resource "kubernetes_config_map" "yba_kubeconfig_config_map" {
-  depends_on = [kubernetes_namespace.yba_operator_namespace]
-  metadata {
-    name      = "yugabyte-kubeconfig-config"
-    namespace = var.yba_operator_namespace
+  set {
+    name  = "kubeconfigConfigMap.kubeconfig"
+    value = var.yba_kubeconfig
   }
-  data = {
-    "yba-kubeconfig.yaml" = "${var.yba_kubeconfig}"
-  }
-}
-
-// Install the YBA operator service account
-resource "kubectl_manifest" "yba_operator_service_account" {
-  depends_on = [
-    kubectl_manifest.yba_operator_admin_user_crd,
-    kubectl_manifest.yba_operator_cloud_provider_crd,
-    kubectl_manifest.yba_operator_universe_crd,
-    kubectl_manifest.yba_operator_software_crd,
-    kubernetes_config_map.yba_operator_pull_secret_config_map
-  ]
-  yaml_body          = data.http.yba_operator_service_account_yaml.response_body
-  override_namespace = var.yba_operator_namespace
-}
-
-// Install the YBA operator cluster role
-resource "kubectl_manifest" "yba_operator_cluster_role" {
-  depends_on = [
-    kubectl_manifest.yba_operator_admin_user_crd,
-    kubectl_manifest.yba_operator_cloud_provider_crd,
-    kubectl_manifest.yba_operator_universe_crd,
-    kubectl_manifest.yba_operator_software_crd,
-    kubernetes_config_map.yba_operator_pull_secret_config_map
-  ]
-  yaml_body = data.http.yba_operator_cluster_role_yaml.response_body
-}
-
-// Install the YBA operator cluster role binding
-resource "kubectl_manifest" "yba_operator_cluster_role_binding" {
-  depends_on = [
-    kubectl_manifest.yba_operator_service_account,
-    kubectl_manifest.yba_operator_cluster_role
-  ]
-  yaml_body = data.http.yba_operator_cluster_role_binding_yaml.response_body
-}
-
-// Install the YBA operator deployment
-resource "kubectl_manifest" "yba_operator_deployment" {
-  depends_on = [
-    kubectl_manifest.yba_operator_cluster_role_binding
-  ]
-  yaml_body          = data.http.yba_operator_deployment_yaml.response_body
-  override_namespace = var.yba_operator_namespace
 }
 
 # Wait for a little bit for the YBA operator to start
@@ -364,7 +251,7 @@ resource "kubectl_manifest" "yba_operator_deployment" {
 resource "time_sleep" "wait_for_yba_operator" {
   depends_on = [
     helm_release.yba,
-    kubectl_manifest.yba_operator_deployment
+    helm_release.yba_kubernetes_operator
   ]
   create_duration = "20s"
 }
